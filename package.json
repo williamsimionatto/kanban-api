@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/williamsimionatto/kanban-api#readme",
   "devDependencies": {
-    "git-commit-msg-linter": "^4.2.1"
+    "@types/node": "^18.8.4",
+    "git-commit-msg-linter": "^4.2.1",
+    "typescript": "^4.8.4"
   }
 }
