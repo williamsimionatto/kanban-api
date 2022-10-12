@@ -9,7 +9,8 @@
     "test:unit": "npm test -- -c jest-unit-config.js",
     "test:integration": "npm test -- -c jest-integration-config.js",
     "test:staged": "npm test -- --findRelatedTests",
-    "test:ci": "npm test -- --coverage"
+    "test:ci": "npm test -- --coverage",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
