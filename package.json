@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/williamsimionatto/kanban-api/issues"
   },
-  "homepage": "https://github.com/williamsimionatto/kanban-api#readme"
+  "homepage": "https://github.com/williamsimionatto/kanban-api#readme",
+  "devDependencies": {
+    "git-commit-msg-linter": "^4.2.1"
+  }
 }
