@@ -18,12 +18,26 @@ const makeController = (): Controller => {
   return new ControllerStub()
 }
 
+type SutTypes = {
+  sut: LogControllerDecorator
+  controllerStub: Controller
+}
+
+const makeSut = (): SutTypes => {
+  const controllerStub = makeController()
+  const sut = new LogControllerDecorator(controllerStub)
+
+  return {
+    sut,
+    controllerStub
+  }
+}
+
 describe('LogController Decorator', () => {
   test('Should call controller handle', async () => {
-    const controllerStub = makeController()
-    const handleSpy = jest.spyOn(controllerStub, 'handle')
+    const { sut, controllerStub } = makeSut()
 
-    const sut = new LogControllerDecorator(controllerStub)
+    const handleSpy = jest.spyOn(controllerStub, 'handle')
     const httpRequest = {
       body: {
         name: 'any_name',
