@@ -1,5 +1,5 @@
 import { AddAccount, Authentication } from '../../../domain/usecases'
-import { badRequest, serverError, created } from '../../helpers/http-helper'
+import { badRequest, serverError, ok } from '../../helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse, Validation } from '../../protocols'
 
 export class SignUpController implements Controller {
@@ -17,15 +17,15 @@ export class SignUpController implements Controller {
         return badRequest(error)
       }
 
-      const account = await this.addAccount.add({
+      await this.addAccount.add({
         name,
         email,
         password
       })
 
-      await this.authentication.auth({ email, password })
+      const accessToken = await this.authentication.auth({ email, password })
 
-      return created(account)
+      return ok({ accessToken })
     } catch (error) {
       return serverError(error)
     }
