@@ -1,8 +1,8 @@
 import { AddAccountRepository } from '../../../../src/data/protocols/db/account'
 import { AddAccount, Authentication } from '../../../../src/domain/usecases'
 import { SignUpController } from '../../../../src/presentation/controllers/signup'
-import { MissingParamError, ServerError } from '../../../../src/presentation/errors'
-import { badRequest } from '../../../../src/presentation/helpers/http-helper'
+import { MissingParamError } from '../../../../src/presentation/errors'
+import { badRequest, serverError } from '../../../../src/presentation/helpers/http-helper'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeHttpRequest = (): HttpRequest => ({
@@ -103,8 +103,7 @@ describe('SignUp Controller', () => {
     }
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   test('Should return 201 if valid data is provided', async () => {
@@ -146,5 +145,15 @@ describe('SignUp Controller', () => {
       email: 'any_email@mail.com',
       password: 'any_password'
     })
+  })
+
+  test('Should return 500 if Authentication throws', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(
+      new Promise((resolve, reject) => reject(new Error()))
+    )
+
+    const httpResponse = await sut.handle(makeHttpRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
