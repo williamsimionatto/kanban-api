@@ -1,5 +1,5 @@
 import { Validation } from '../../../../presentation/protocols'
-import { RequiredFieldValidation, ValidationComposite } from '../../../../validation/validators'
+import { IncludesValidation, RequiredFieldValidation, ValidationComposite, DateValidation } from '../../../../validation/validators'
 
 export const makeAddProjectValidation = (): ValidationComposite => {
   const validations: Validation[] = []
@@ -7,5 +7,7 @@ export const makeAddProjectValidation = (): ValidationComposite => {
     validations.push(new RequiredFieldValidation(field))
   }
 
+  validations.push(new DateValidation('startDate', 'endDate'))
+  validations.push(new IncludesValidation('status', ['active', 'inactive', 'done']))
   return new ValidationComposite(validations)
 }

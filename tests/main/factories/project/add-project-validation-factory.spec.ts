@@ -1,6 +1,6 @@
 import { makeAddProjectController } from '../../../../src/main/factories/controllers/project'
 import { Validation } from '../../../../src/presentation/protocols'
-import { RequiredFieldValidation, ValidationComposite } from '../../../../src/validation/validators'
+import { DateValidation, IncludesValidation, RequiredFieldValidation, ValidationComposite } from '../../../../src/validation/validators'
 
 jest.mock('../../../../src/validation/validators/validation-composite')
 
@@ -12,6 +12,8 @@ describe('AddProjectValidation Factory', () => {
       validations.push(new RequiredFieldValidation(field))
     }
 
+    validations.push(new DateValidation('startDate', 'endDate'))
+    validations.push(new IncludesValidation('status', ['active', 'inactive', 'done']))
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
   })
 })
