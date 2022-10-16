@@ -1,6 +1,6 @@
 import { LoadAccountByToken } from '../../../src/domain/usecases'
 import { AccessDeniedError } from '../../../src/presentation/errors'
-import { forbidden, ok } from '../../../src/presentation/helpers/http-helper'
+import { forbidden, ok, serverError } from '../../../src/presentation/helpers/http-helper'
 import { AuthMiddleware } from '../../../src/presentation/middlewares'
 
 const makeLoadAccountByTokenStub = (): LoadAccountByToken => {
@@ -69,5 +69,16 @@ describe('Auth Middlware', () => {
     expect(httpResponse).toEqual(ok({
       accountId: 'valid_id'
     }))
+  })
+
+  test('Should return 500 if LoadAccountByToken throws', async () => {
+    const { sut, loadAccountByTokenStub } = makeSut()
+    jest.spyOn(loadAccountByTokenStub, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const httpResponse = await sut.handle({
+      headers: {
+        'x-access-token': 'any_token'
+      }
+    })
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
