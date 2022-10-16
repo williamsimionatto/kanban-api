@@ -1,6 +1,6 @@
 import { AddProject } from '../../../../../src/domain/usecases'
 import { AddProjectController } from '../../../../../src/presentation/controllers/project'
-import { badRequest } from '../../../../../src/presentation/helpers/http-helper'
+import { badRequest, serverError } from '../../../../../src/presentation/helpers/http-helper'
 import { HttpRequest, Validation } from '../../../../../src/presentation/protocols'
 
 import faker from 'faker'
@@ -82,5 +82,14 @@ describe('AddProject Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return 500 if AddProject throws', async () => {
+    const { sut, addProjectStub } = makeSut()
+    jest.spyOn(addProjectStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
