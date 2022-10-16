@@ -35,4 +35,21 @@ describe('DateValidation', () => {
     })
     expect(error).toBeFalsy()
   })
+
+  test('Should not return if end date is not provided', () => {
+    const sut = makeSut()
+    const error = sut.validate({
+      startDate: faker.date.past()
+    })
+    expect(error).toBeFalsy()
+  })
+
+  test('Should not return if end date is null', () => {
+    const sut = makeSut()
+    const error = sut.validate({
+      startDate: faker.date.past(),
+      endDate: null
+    })
+    expect(error).toBeFalsy()
+  })
 })

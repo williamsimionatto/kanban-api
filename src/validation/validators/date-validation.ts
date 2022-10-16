@@ -8,11 +8,13 @@ export class DateValidation implements Validation {
   ) {}
 
   validate (input: any): Error {
-    const date = new Date(input[this.field])
-    const dateToCompare = new Date(input[this.fieldToCompare])
+    if (input[this.fieldToCompare] != null) {
+      const date = new Date(input[this.field])
+      const dateToCompare = new Date(input[this.fieldToCompare])
 
-    if (dateToCompare && date > dateToCompare) {
-      return new InvalidParamError(this.fieldToCompare)
+      if (dateToCompare !== null && date > dateToCompare) {
+        return new InvalidParamError(this.fieldToCompare)
+      }
     }
   }
 }
