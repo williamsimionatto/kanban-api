@@ -1,5 +1,5 @@
 import { AddProject } from '../../../../domain/usecases'
-import { badRequest, serverError } from '../../../helpers/http-helper'
+import { badRequest, noContent, serverError } from '../../../helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse, Validation } from '../../../protocols'
 
 export class AddProjectController implements Controller {
@@ -24,7 +24,7 @@ export class AddProjectController implements Controller {
         endDate
       })
 
-      return null
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
