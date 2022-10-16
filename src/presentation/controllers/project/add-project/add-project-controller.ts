@@ -14,7 +14,14 @@ export class AddProjectController implements Controller {
       return badRequest(error)
     }
 
-    await this.addProject.add(httpRequest.body)
+    const { name, description, status, startDate, endDate } = httpRequest.body
+    await this.addProject.add({
+      name,
+      description,
+      status,
+      startDate,
+      endDate
+    })
 
     return null
   }
