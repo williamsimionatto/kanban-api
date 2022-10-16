@@ -1,7 +1,7 @@
 import { Collection } from 'mongodb'
 
 import { AddAccountRepository } from '../../../../../src/data/protocols/db/account'
-import { AccountMongoRepository } from '../../../../../src/infra/db/mongodb'
+import { AccountMongoRepository } from '../../../../../src/infra/db/mongodb/account'
 import { MongoHelper } from '../../../../../src/infra/db/mongodb/helpers'
 
 const makeFakeAccountData = (): AddAccountRepository.Params => ({
