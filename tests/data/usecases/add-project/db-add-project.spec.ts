@@ -44,4 +44,12 @@ describe('DbAddProject UseCase', () => {
     await sut.add(projectParams)
     expect(addSpy).toHaveBeenCalledWith(projectParams)
   })
+
+  test('Should throw if AddProjectRespository thorws', async () => {
+    const { sut, addProjectRepositoryStub } = makeSut()
+    jest.spyOn(addProjectRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const projectParams = mockAddProjectParams()
+    const account = sut.add(projectParams)
+    await expect(account).rejects.toThrow()
+  })
 })
