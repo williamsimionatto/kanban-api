@@ -1,12 +1,13 @@
 import { Authentication } from '../../../domain/usecases'
 import { Encrypter, HashComparer } from '../../protocols/cryptography'
-import { LoadAccountByEmailRepository } from '../../protocols/db/account'
+import { LoadAccountByEmailRepository, UpdateAccessTokenRepository } from '../../protocols/db/account'
 
 export class DbAuthentication implements Authentication {
   constructor (
     private readonly loadAccountByEmailRepository: LoadAccountByEmailRepository,
     private readonly hashComparer: HashComparer,
-    private readonly encrypter: Encrypter
+    private readonly encrypter: Encrypter,
+    private readonly updateAccessTokenRepository: UpdateAccessTokenRepository
   ) {}
 
   async auth (authentication: Authentication.Params): Promise<string> {
@@ -15,6 +16,7 @@ export class DbAuthentication implements Authentication {
       const isvalid = await this.hashComparer.compare(authentication.password, account.password)
       if (isvalid) {
         const accessToknen = await this.encrypter.encrypt(account.id)
+        await this.updateAccessTokenRepository.updateAccessToken(account.id, accessToknen)
         return accessToknen
       }
     }
