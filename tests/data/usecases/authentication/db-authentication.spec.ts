@@ -16,6 +16,7 @@ const makeLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
       const account: LoadAccountByEmailRepository.Result = {
         id: 'any_id',
         name: 'any_name',
+        email: 'any_mail@mail.com',
         password: 'hashed_password'
       }
 
