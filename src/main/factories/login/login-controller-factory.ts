@@ -1,19 +1,27 @@
-import { DbAddAccount } from '../../../data/usecases/add-account'
-import { BcryptAdapter } from '../../../infra/cryptography'
-import { AccountMongoRepository } from '../../../infra/db/mongodb/account'
-import { LogMongoRepository } from '../../../infra/db/mongodb/log'
-import { SignUpController } from '../../../presentation/controllers/signup'
-import { Controller } from '../../../presentation/protocols'
+import env from '../../config/env'
 import { LogControllerDecorator } from '../../decorators'
 import { makeLoginValidation } from './login-validation-factory'
+import { Controller } from '../../../presentation/protocols'
+import { DbAuthentication } from '../../../data/usecases'
+import { LoginController } from '../../../presentation/controllers'
+import { LogMongoRepository } from '../../../infra/db/mongodb/log'
+import { AccountMongoRepository } from '../../../infra/db/mongodb/account'
+import { BcryptAdapter, JwtAdapter } from '../../../infra/cryptography'
 
 export const makeLoginController = (): Controller => {
-  const salt = 12
-  const brcryptAdapter = new BcryptAdapter(salt)
   const accountMongoRepository = new AccountMongoRepository()
-  const dbAddAccount = new DbAddAccount(brcryptAdapter, accountMongoRepository)
-  const singUpController = new SignUpController(dbAddAccount, makeLoginValidation())
-  const logRepository = new LogMongoRepository()
+  const brcypAdapter = new BcryptAdapter(12)
+  const jwtAdapter = new JwtAdapter(env.jwtSecret)
+  const dbAuthentication = new DbAuthentication(
+    accountMongoRepository,
+    brcypAdapter,
+    jwtAdapter,
+    accountMongoRepository
+  )
 
-  return new LogControllerDecorator(singUpController, logRepository)
+  const validation = makeLoginValidation()
+  const loginController = new LoginController(dbAuthentication, validation)
+
+  const logMongoRepository = new LogMongoRepository()
+  return new LogControllerDecorator(loginController, logMongoRepository)
 }
