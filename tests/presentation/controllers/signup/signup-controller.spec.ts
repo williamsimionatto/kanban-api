@@ -1,8 +1,8 @@
 import { AddAccountRepository } from '../../../../src/data/protocols/db/account'
 import { AddAccount, Authentication } from '../../../../src/domain/usecases'
 import { SignUpController } from '../../../../src/presentation/controllers/signup'
-import { MissingParamError } from '../../../../src/presentation/errors'
-import { badRequest, ok, serverError } from '../../../../src/presentation/helpers/http-helper'
+import { EmailInUseError, MissingParamError } from '../../../../src/presentation/errors'
+import { badRequest, forbidden, ok, serverError } from '../../../../src/presentation/helpers/http-helper'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeHttpRequest = (): HttpRequest => ({
@@ -155,5 +155,13 @@ describe('SignUp Controller', () => {
 
     const httpResponse = await sut.handle(makeHttpRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should return 403 if AddAccount returns false', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockReturnValueOnce(new Promise(resolve => resolve(false)))
+
+    const httpResponse = await sut.handle(makeHttpRequest())
+    expect(httpResponse).toEqual(forbidden(new EmailInUseError()))
   })
 })
