@@ -1,4 +1,4 @@
-import { makeLoginController } from '../../../src/main/factories/login'
+import { makeLoginController } from '../../../src/main/factories/controllers/login'
 import { Validation } from '../../../src/presentation/protocols'
 import { EmailValidator } from '../../../src/validation/protocols'
 import { EmailValidation, RequiredFieldValidation, ValidationComposite } from '../../../src/validation/validators'
