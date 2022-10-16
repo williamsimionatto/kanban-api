@@ -25,7 +25,7 @@ const makeAddAccountRepository = (): AddAccountRepository => {
 const makeCheckAccountByEmailRepository = (): CheckAccountByEmailRepository => {
   class CheckAccountByEmailRepositoryStub implements CheckAccountByEmailRepository {
     async checkByEmail (email: string): Promise<CheckAccountByEmailRepository.Result> {
-      return new Promise(resolve => resolve(false))
+      return new Promise(resolve => resolve(null))
     }
   }
 
@@ -138,5 +138,19 @@ describe('DbAddAccount Usecase', () => {
 
     await sut.add(accountData)
     expect(checkSpy).toHaveBeenCalledWith('valid_email@mail.com')
+  })
+
+  test('Should return null if CheckAccountByEmailRepository not return null', async () => {
+    const { sut, checkAccountByEmailRepositoryStub } = makeSut()
+    jest.spyOn(checkAccountByEmailRepositoryStub, 'checkByEmail').mockReturnValueOnce(new Promise(resolve => resolve(true)))
+
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid_email@mail.com',
+      password: 'valid_password'
+    }
+
+    const account = await sut.add(accountData)
+    expect(account).toBeFalsy()
   })
 })
