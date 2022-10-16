@@ -27,8 +27,8 @@ const makeValidationStub = (): Validation => {
 
 const makeAddProjectStub = (): AddProject => {
   class AddProjectStub implements AddProject {
-    async add (project: AddProject.Params): Promise<AddProject.Result> {
-      return new Promise(resolve => resolve(true))
+    async add (project: AddProject.Params): Promise<void> {
+      return new Promise(resolve => resolve())
     }
   }
 

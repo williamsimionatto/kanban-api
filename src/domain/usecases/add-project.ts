@@ -1,5 +1,5 @@
 export interface AddProject {
-  add: (account: AddProject.Params) => Promise<AddProject.Result>
+  add: (data: AddProject.Params) => Promise<void>
 }
 
 export namespace AddProject {
@@ -10,6 +10,4 @@ export namespace AddProject {
     startDate: Date
     endDate?: Date
   }
-
-  export type Result = boolean
 }
