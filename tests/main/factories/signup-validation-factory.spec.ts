@@ -1,4 +1,4 @@
-import { makeSignUpValidation } from '../../../src/main/factories/signup'
+import { makeSignUpValidation } from '../../../src/main/factories/controllers/signup'
 import { Validation } from '../../../src/presentation/protocols'
 import { EmailValidator } from '../../../src/validation/protocols'
 import { CompareFieldsValidation, EmailValidation, RequiredFieldValidation, ValidationComposite } from '../../../src/validation/validators'

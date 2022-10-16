@@ -74,4 +74,19 @@ describe('Account Mongo Repository', () => {
       expect(account.accessToken).toBe(accessToken)
     })
   })
+
+  describe('checkByEmail()', () => {
+    test('Should return true if email is already in use', async () => {
+      const sut = makeSut()
+      await accountCollection.insertOne(makeFakeAccountData())
+      const isValid = await sut.checkByEmail('any_email@mail.com')
+      expect(isValid).toBe(true)
+    })
+
+    test('Should return false if email is not in use', async () => {
+      const sut = makeSut()
+      const isValid = await sut.checkByEmail('any_email@mail.com')
+      expect(isValid).toBe(false)
+    })
+  })
 })
