@@ -1,7 +1,7 @@
 import { AddProject } from '../../../../src/domain/usecases'
 
 import faker from 'faker'
-import { DbAddProject } from '../../../../src/data/usecases/project'
+import { DbAddProject } from '../../../../src/data/usecases/add-project'
 import { AddProjectRepository } from '../../../../src/data/protocols/db/project'
 
 const mockAddProjectParams = (): AddProject.Params => ({
