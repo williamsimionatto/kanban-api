@@ -1,6 +1,6 @@
 import { AddProject } from '../../../../domain/usecases'
 import { badRequest, noContent, serverError } from '../../../helpers/http-helper'
-import { Controller, HttpRequest, HttpResponse, Validation } from '../../../protocols'
+import { Controller, HttpResponse, Validation } from '../../../protocols'
 
 export class AddProjectController implements Controller {
   constructor (
@@ -8,14 +8,14 @@ export class AddProjectController implements Controller {
     private readonly addProject: AddProject
   ) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle (request: AddProjectController.Request): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(request)
       if (error) {
         return badRequest(error)
       }
 
-      const { name, description, status, startDate, endDate } = httpRequest.body
+      const { name, description, status, startDate, endDate } = request
       await this.addProject.add({
         name,
         description,
@@ -28,5 +28,15 @@ export class AddProjectController implements Controller {
     } catch (error) {
       return serverError(error)
     }
+  }
+}
+
+export namespace AddProjectController {
+  export type Request = {
+    name: string
+    description: string
+    status: string
+    startDate: Date
+    endDate: Date
   }
 }

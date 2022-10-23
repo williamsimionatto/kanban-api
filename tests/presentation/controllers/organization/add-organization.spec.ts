@@ -2,13 +2,11 @@ import faker from 'faker'
 import { AddOrganization } from '../../../../src/domain/usecases'
 import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
 import { badRequest, noContent, serverError } from '../../../../src/presentation/helpers'
-import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
+import { Validation } from '../../../../src/presentation/protocols'
 
-const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    name: faker.name.findName(),
-    description: faker.random.words()
-  }
+const makeFakeRequest = (): AddOrganizationController.Request => ({
+  name: faker.name.findName(),
+  description: faker.random.words()
 })
 
 const makeValidationStub = (): Validation => {
@@ -54,7 +52,7 @@ describe('AddOrganization Controller', () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest)
   })
 
   test('Should return 400 if Validation returns an error', async () => {
@@ -69,7 +67,7 @@ describe('AddOrganization Controller', () => {
     const addSpy = jest.spyOn(addOrganizationStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest)
   })
 
   test('Should return 500 if AddOrganization throws', async () => {

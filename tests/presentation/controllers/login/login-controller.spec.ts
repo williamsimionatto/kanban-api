@@ -2,13 +2,13 @@ import { Authentication } from '../../../../src/domain/usecases'
 import { LoginController } from '../../../../src/presentation/controllers'
 import { MissingParamError } from '../../../../src/presentation/errors'
 import { badRequest, ok, serverError, unauthorized } from '../../../../src/presentation/helpers'
-import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
+import { Validation } from '../../../../src/presentation/protocols'
 
-const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    email: 'any_email@mail.com',
-    password: 'any_password'
-  }
+import faker from 'faker'
+
+const makeFakeRequest = (): LoginController.Request => ({
+  email: faker.internet.email(),
+  password: faker.internet.password()
 })
 
 const makeAuthenticationStub = (): Authentication => {
@@ -53,10 +53,11 @@ describe('Login Controller', () => {
   test('Should rcall Authentication with correct values', async () => {
     const { sut, authenticationStub } = makeSut()
     const authSpy = jest.spyOn(authenticationStub, 'auth')
-    await sut.handle(makeFakeRequest())
+    const request = makeFakeRequest()
+    await sut.handle(request)
     expect(authSpy).toHaveBeenCalledWith({
-      email: 'any_email@mail.com',
-      password: 'any_password'
+      email: request.email,
+      password: request.password
     })
   })
 
@@ -90,7 +91,7 @@ describe('Login Controller', () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest)
   })
 
   test('Should return 400 if Validation returns an error', async () => {
