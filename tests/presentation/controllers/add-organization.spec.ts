@@ -1,8 +1,8 @@
 import faker from 'faker'
-import { AddOrganization } from '../../../../src/domain/usecases'
-import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
-import { badRequest, noContent, serverError } from '../../../../src/presentation/helpers'
-import { Validation } from '../../../../src/presentation/protocols'
+import { AddOrganization } from '../../../src/domain/usecases'
+import { AddOrganizationController } from '../../../src/presentation/controllers'
+import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
+import { Validation } from '../../../src/presentation/protocols'
 
 const makeFakeRequest = (): AddOrganizationController.Request => ({
   name: faker.name.findName(),

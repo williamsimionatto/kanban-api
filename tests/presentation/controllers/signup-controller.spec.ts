@@ -1,9 +1,9 @@
-import { AddAccountRepository } from '../../../../src/data/protocols/db/account'
-import { AddAccount, Authentication } from '../../../../src/domain/usecases'
-import { SignUpController } from '../../../../src/presentation/controllers/signup'
-import { EmailInUseError, MissingParamError } from '../../../../src/presentation/errors'
-import { badRequest, forbidden, ok, serverError } from '../../../../src/presentation/helpers'
-import { Validation } from '../../../../src/presentation/protocols'
+import { AddAccountRepository } from '../../../src/data/protocols/db/account'
+import { AddAccount, Authentication } from '../../../src/domain/usecases'
+import { SignUpController } from '../../../src/presentation/controllers'
+import { EmailInUseError, MissingParamError } from '../../../src/presentation/errors'
+import { badRequest, forbidden, ok, serverError } from '../../../src/presentation/helpers'
+import { Validation } from '../../../src/presentation/protocols'
 
 import faker from 'faker'
 

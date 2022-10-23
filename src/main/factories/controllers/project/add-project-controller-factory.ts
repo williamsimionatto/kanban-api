@@ -1,4 +1,4 @@
-import { AddProjectController } from '../../../../presentation/controllers/project'
+import { AddProjectController } from '../../../../presentation/controllers'
 import { Controller } from '../../../../presentation/protocols'
 import { makeLogControllerDecorator } from '../../decorators'
 import { makeDbAddProject } from '../../usecases'

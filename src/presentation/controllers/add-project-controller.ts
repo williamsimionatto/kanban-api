@@ -1,6 +1,6 @@
-import { AddProject } from '../../../../domain/usecases'
-import { badRequest, noContent, serverError } from '../../../helpers/http-helper'
-import { Controller, HttpResponse, Validation } from '../../../protocols'
+import { AddProject } from '../../domain/usecases'
+import { badRequest, noContent, serverError } from '../helpers/http-helper'
+import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddProjectController implements Controller {
   constructor (

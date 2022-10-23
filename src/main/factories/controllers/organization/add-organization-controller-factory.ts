@@ -1,4 +1,4 @@
-import { AddOrganizationController } from '../../../../presentation/controllers/organization'
+import { AddOrganizationController } from '../../../../presentation/controllers'
 import { Controller } from '../../../../presentation/protocols'
 import { makeLogControllerDecorator } from '../../decorators'
 import { maekDbAddOrganization } from '../../usecases'

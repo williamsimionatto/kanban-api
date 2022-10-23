@@ -1,8 +1,8 @@
-import { Authentication } from '../../../../src/domain/usecases'
-import { LoginController } from '../../../../src/presentation/controllers'
-import { MissingParamError } from '../../../../src/presentation/errors'
-import { badRequest, ok, serverError, unauthorized } from '../../../../src/presentation/helpers'
-import { Validation } from '../../../../src/presentation/protocols'
+import { Authentication } from '../../../src/domain/usecases'
+import { LoginController } from '../../../src/presentation/controllers'
+import { MissingParamError } from '../../../src/presentation/errors'
+import { badRequest, ok, serverError, unauthorized } from '../../../src/presentation/helpers'
+import { Validation } from '../../../src/presentation/protocols'
 
 import faker from 'faker'
 

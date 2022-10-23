@@ -1,7 +1,7 @@
-import { AddProject } from '../../../../../src/domain/usecases'
-import { AddProjectController } from '../../../../../src/presentation/controllers/project'
-import { badRequest, noContent, serverError } from '../../../../../src/presentation/helpers'
-import { Validation } from '../../../../../src/presentation/protocols'
+import { AddProject } from '../../../src/domain/usecases'
+import { AddProjectController } from '../../../src/presentation/controllers'
+import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
+import { Validation } from '../../../src/presentation/protocols'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
