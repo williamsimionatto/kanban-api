@@ -10,8 +10,8 @@ const makeFakeOrganizationData = (): AddOrganization.Params => ({
 
 const makeAddOrganizationRepository = (): AddOrganizationRepository => {
   class AddOrganizationRepositoryStub implements AddOrganizationRepository {
-    async add (organizationData: AddOrganizationRepository.Params): Promise<AddOrganizationRepository.Result> {
-      return new Promise(resolve => resolve(true))
+    async add (organizationData: AddOrganizationRepository.Params): Promise<void> {
+      return new Promise(resolve => resolve(null))
     }
   }
 
