@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { AddOrganization } from '../../../../src/domain/usecases'
 import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
-import { badRequest } from '../../../../src/presentation/helpers/http-helper'
+import { badRequest, serverError } from '../../../../src/presentation/helpers/http-helper'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -70,5 +70,14 @@ describe('AddOrganization Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
+  test('Should return 500 if AddOrganization throws', async () => {
+    const { sut, addOrganizationStub } = makeSut()
+    jest.spyOn(addOrganizationStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
