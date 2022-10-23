@@ -2,7 +2,7 @@ import { AddAccountRepository } from '../../../../src/data/protocols/db/account'
 import { AddAccount, Authentication } from '../../../../src/domain/usecases'
 import { SignUpController } from '../../../../src/presentation/controllers/signup'
 import { EmailInUseError, MissingParamError } from '../../../../src/presentation/errors'
-import { badRequest, forbidden, ok, serverError } from '../../../../src/presentation/helpers/http-helper'
+import { badRequest, forbidden, ok, serverError } from '../../../../src/presentation/helpers'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeHttpRequest = (): HttpRequest => ({

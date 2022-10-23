@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { AddOrganization } from '../../../../src/domain/usecases'
 import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
-import { badRequest, noContent, serverError } from '../../../../src/presentation/helpers/http-helper'
+import { badRequest, noContent, serverError } from '../../../../src/presentation/helpers'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeFakeRequest = (): HttpRequest => ({

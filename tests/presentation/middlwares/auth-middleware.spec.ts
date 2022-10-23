@@ -1,6 +1,6 @@
 import { LoadAccountByToken } from '../../../src/domain/usecases'
 import { AccessDeniedError } from '../../../src/presentation/errors'
-import { forbidden, ok, serverError } from '../../../src/presentation/helpers/http-helper'
+import { forbidden, ok, serverError } from '../../../src/presentation/helpers'
 import { AuthMiddleware } from '../../../src/presentation/middlewares'
 
 const makeLoadAccountByTokenStub = (): LoadAccountByToken => {

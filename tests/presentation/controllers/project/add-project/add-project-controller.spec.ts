@@ -1,6 +1,6 @@
 import { AddProject } from '../../../../../src/domain/usecases'
 import { AddProjectController } from '../../../../../src/presentation/controllers/project'
-import { badRequest, noContent, serverError } from '../../../../../src/presentation/helpers/http-helper'
+import { badRequest, noContent, serverError } from '../../../../../src/presentation/helpers'
 import { HttpRequest, Validation } from '../../../../../src/presentation/protocols'
 
 import faker from 'faker'
