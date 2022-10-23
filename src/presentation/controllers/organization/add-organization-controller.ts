@@ -1,3 +1,4 @@
+import { badRequest } from '../../helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse, Validation } from '../../protocols'
 
 export class AddOrganizationController implements Controller {
@@ -6,7 +7,11 @@ export class AddOrganizationController implements Controller {
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    this.validation.validate(httpRequest.body)
+    const error = this.validation.validate(httpRequest.body)
+    if (error) {
+      return badRequest(error)
+    }
+
     return null
   }
 }
