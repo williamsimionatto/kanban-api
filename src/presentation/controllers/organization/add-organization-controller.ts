@@ -1,5 +1,5 @@
 import { AddOrganization } from '../../../domain/usecases'
-import { badRequest, serverError } from '../../helpers/http-helper'
+import { badRequest, noContent, serverError } from '../../helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse, Validation } from '../../protocols'
 
 export class AddOrganizationController implements Controller {
@@ -18,7 +18,7 @@ export class AddOrganizationController implements Controller {
       const { ...organization } = httpRequest.body
       await this.addOrganization.add(organization)
 
-      return null
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
