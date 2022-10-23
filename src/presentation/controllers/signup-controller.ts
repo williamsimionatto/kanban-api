@@ -12,8 +12,7 @@ export class SignUpController implements Controller {
 
   async handle (request: SignUpController.Request): Promise<HttpResponse> {
     try {
-      console.log(request)
-      const { email, password, name } = request
+      const { email, password, name, organizationId } = request
       const error = this.validation.validate(request)
       if (error) {
         return badRequest(error)
@@ -22,7 +21,8 @@ export class SignUpController implements Controller {
       const account = await this.addAccount.add({
         name,
         email,
-        password
+        password,
+        organizationId
       })
 
       if (!account) {
@@ -44,5 +44,6 @@ export namespace SignUpController {
     email: string
     password: string
     passwordConfirmation: string
+    organizationId: string
   }
 }

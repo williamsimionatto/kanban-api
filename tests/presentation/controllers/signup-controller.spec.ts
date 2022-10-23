@@ -13,7 +13,8 @@ const mockRequest = (): SignUpController.Request => {
     name: faker.name.findName(),
     email: faker.internet.email(),
     password,
-    passwordConfirmation: password
+    passwordConfirmation: password,
+    organizationId: faker.datatype.uuid()
   }
 }
 
@@ -77,7 +78,8 @@ describe('SignUp Controller', () => {
     expect(addAccountSpy).toHaveBeenCalledWith({
       name: request.name,
       email: request.email,
-      password: request.password
+      password: request.password,
+      organizationId: request.organizationId
     })
   })
 

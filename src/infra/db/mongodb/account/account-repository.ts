@@ -1,6 +1,7 @@
-import { ObjectId } from 'mongodb'
 import { AddAccountRepository, CheckAccountByEmailRepository, LoadAccountByEmailRepository, LoadAccountByTokenRepository, UpdateAccessTokenRepository } from '../../../../data/protocols/db/account'
 import { MongoHelper } from '../helpers'
+
+import { ObjectId } from 'mongodb'
 
 export class AccountMongoRepository implements
   AddAccountRepository,
@@ -10,7 +11,8 @@ export class AccountMongoRepository implements
   LoadAccountByTokenRepository {
   async add (data: AddAccountRepository.Params): Promise<AddAccountRepository.Result> {
     const accountCollection = await MongoHelper.getCollection('accounts')
-    const result = await accountCollection.insertOne(data)
+    const account = Object.assign({}, data, { organizationId: new ObjectId(data.organizationId) })
+    const result = await accountCollection.insertOne(account)
     return result !== null
   }
 

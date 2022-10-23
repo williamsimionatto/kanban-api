@@ -5,6 +5,7 @@ import { MongoHelper } from '../../../src/infra/db/mongodb/helpers'
 import app from '../../../src/main/config/app'
 
 let accountCollection: Collection
+let organizationCollection: Collection
 
 describe('Login Routes', () => {
   beforeAll(async () => {
@@ -14,6 +15,8 @@ describe('Login Routes', () => {
   beforeEach(async () => {
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
+    organizationCollection = await MongoHelper.getCollection('organizations')
+    await organizationCollection.deleteMany({})
   })
 
   afterAll(async () => {
@@ -22,13 +25,19 @@ describe('Login Routes', () => {
 
   describe('POST /signup', () => {
     test('Should return 200 on signup', async () => {
+      const organization = await organizationCollection.insertOne({
+        name: 'any_name',
+        description: 'any_description'
+      })
+
       await request(app)
         .post('/api/signup')
         .send({
           name: 'William',
           email: 'william@mail.com',
           password: '123',
-          passwordConfirmation: '123'
+          passwordConfirmation: '123',
+          organizationId: organization.insertedId.toHexString()
         })
         .expect(200)
     })

@@ -1,22 +1,26 @@
 import { Collection } from 'mongodb'
 
-import { AddAccountRepository } from '../../../../../src/data/protocols/db/account'
+import { mockAddAccountParams } from '../../../../domain/mocks'
 import { AccountMongoRepository } from '../../../../../src/infra/db/mongodb/account'
 import { MongoHelper } from '../../../../../src/infra/db/mongodb/helpers'
 
 import faker from 'faker'
-
-const makeFakeAccountData = (): AddAccountRepository.Params => ({
-  name: 'any_name',
-  email: 'any_email@mail.com',
-  password: 'any_password'
-})
 
 const makeSut = (): AccountMongoRepository => {
   return new AccountMongoRepository()
 }
 
 let accountCollection: Collection
+let organizationCollection: Collection
+
+const mockOrganizationId = async (): Promise<string> => {
+  const res = await organizationCollection.insertOne({
+    name: faker.company.companyName(),
+    description: faker.company.catchPhrase()
+  })
+
+  return res.insertedId.toHexString()
+}
 
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
@@ -30,12 +34,19 @@ describe('Account Mongo Repository', () => {
   beforeEach(async () => {
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
+    organizationCollection = await MongoHelper.getCollection('organizations')
+    await organizationCollection.deleteMany({})
   })
 
   describe('add()', () => {
     test('Should return an account on add success', async () => {
+      const organizationId = await mockOrganizationId()
+      const accountParams = mockAddAccountParams()
       const sut = makeSut()
-      const isValid = await sut.add(makeFakeAccountData())
+      const isValid = await sut.add({
+        ...accountParams,
+        organizationId
+      })
 
       expect(isValid).toBe(true)
     })
@@ -44,14 +55,14 @@ describe('Account Mongo Repository', () => {
   describe('loadByEmail()', () => {
     test('Should return an account on loadByEmail success', async () => {
       const sut = makeSut()
-      const addAccountParams = makeFakeAccountData()
+      const addAccountParams = mockAddAccountParams()
       await accountCollection.insertOne(addAccountParams)
-      const account = await sut.loadByEmail('any_email@mail.com')
+      const account = await sut.loadByEmail(addAccountParams.email)
       expect(account).toBeTruthy()
       expect(account.id).toBeTruthy()
-      expect(account.name).toBe('any_name')
-      expect(account.email).toBe('any_email@mail.com')
-      expect(account.password).toBe('any_password')
+      expect(account.name).toBe(addAccountParams.name)
+      expect(account.email).toBe(addAccountParams.email)
+      expect(account.password).toBe(addAccountParams.password)
     })
 
     test('Should return null if loadByEmail fails', async () => {
@@ -64,7 +75,7 @@ describe('Account Mongo Repository', () => {
   describe('updateAccessToken()', () => {
     test('Should update the account accessToken on updateAccessToken success', async () => {
       const sut = makeSut()
-      const res = await accountCollection.insertOne(makeFakeAccountData())
+      const res = await accountCollection.insertOne(mockAddAccountParams())
       const fakeAccount = await accountCollection.findOne({ _id: res.insertedId })
       expect(fakeAccount.accessToken).toBeFalsy()
 
@@ -80,14 +91,15 @@ describe('Account Mongo Repository', () => {
   describe('checkByEmail()', () => {
     test('Should return true if email is already in use', async () => {
       const sut = makeSut()
-      await accountCollection.insertOne(makeFakeAccountData())
-      const isValid = await sut.checkByEmail('any_email@mail.com')
+      const accountParams = mockAddAccountParams()
+      await accountCollection.insertOne(accountParams)
+      const isValid = await sut.checkByEmail(accountParams.email)
       expect(isValid).toBe(true)
     })
 
     test('Should return false if email is not in use', async () => {
       const sut = makeSut()
-      const isValid = await sut.checkByEmail('any_email@mail.com')
+      const isValid = await sut.checkByEmail(faker.internet.email())
       expect(isValid).toBe(false)
     })
   })
