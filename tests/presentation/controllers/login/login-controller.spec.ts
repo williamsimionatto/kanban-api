@@ -1,7 +1,7 @@
 import { Authentication } from '../../../../src/domain/usecases'
 import { LoginController } from '../../../../src/presentation/controllers'
 import { MissingParamError } from '../../../../src/presentation/errors'
-import { badRequest, ok, serverError, unauthorized } from '../../../../src/presentation/helpers/http-helper'
+import { badRequest, ok, serverError, unauthorized } from '../../../../src/presentation/helpers'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeFakeRequest = (): HttpRequest => ({
