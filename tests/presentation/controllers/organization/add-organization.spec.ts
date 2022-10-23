@@ -1,4 +1,5 @@
 import faker from 'faker'
+import { AddOrganization } from '../../../../src/domain/usecases'
 import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
 import { badRequest } from '../../../../src/presentation/helpers/http-helper'
 import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
@@ -19,18 +20,31 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub()
 }
 
+const makeAddOrganizationStub = (): AddOrganization => {
+  class AddOrganizationStub implements AddOrganization {
+    async add (organization: AddOrganization.Params): Promise<void> {
+      return new Promise(resolve => resolve())
+    }
+  }
+
+  return new AddOrganizationStub()
+}
+
 type SutTypes = {
   sut: AddOrganizationController
   validationStub: Validation
+  addOrganizationStub: AddOrganization
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub()
+  const addOrganizationStub = makeAddOrganizationStub()
 
-  const sut = new AddOrganizationController(validationStub)
+  const sut = new AddOrganizationController(validationStub, addOrganizationStub)
   return {
     sut,
-    validationStub
+    validationStub,
+    addOrganizationStub
   }
 }
 
@@ -48,5 +62,13 @@ describe('AddOrganization Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should call AddOrganization with correct values', async () => {
+    const { sut, addOrganizationStub } = makeSut()
+    const addSpy = jest.spyOn(addOrganizationStub, 'add')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
