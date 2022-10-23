@@ -1,10 +1,9 @@
 import { Router } from 'express'
 
-import { adaptMiddleware, adaptRoute } from '../adapters'
+import { adaptRoute } from '../adapters'
 import { makeAddProjectController } from '../factories/controllers/project'
-import { makeAuthMiddleware } from '../factories/middlewares/auth-middleware-factory'
+import { adminAuth } from '../middlewares'
 
 export default (router: Router): void => {
-  const adminAuth = adaptMiddleware(makeAuthMiddleware('admin'))
   router.post('/project', adminAuth, adaptRoute(makeAddProjectController()))
 }
