@@ -1,11 +1,11 @@
 import { LogErrorRepository } from '../../../../src/data/protocols/db/log'
 import { LogControllerDecorator } from '../../../../src/main/decorators'
 import { serverError } from '../../../../src/presentation/helpers'
-import { Controller, HttpRequest, HttpResponse } from '../../../../src/presentation/protocols'
+import { Controller, HttpResponse } from '../../../../src/presentation/protocols'
 
 const makeController = (): Controller => {
   class ControllerStub implements Controller {
-    async handle (request: HttpRequest): Promise<HttpResponse> {
+    async handle (request: any): Promise<HttpResponse> {
       const httpResponse: HttpResponse = {
         statusCode: 200,
         body: {
