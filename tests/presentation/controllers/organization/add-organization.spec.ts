@@ -1,18 +1,13 @@
-import { AddProject } from '../../../../../src/domain/usecases'
-import { AddProjectController } from '../../../../../src/presentation/controllers/project'
-import { badRequest, noContent, serverError } from '../../../../../src/presentation/helpers'
-import { HttpRequest, Validation } from '../../../../../src/presentation/protocols'
-
 import faker from 'faker'
-import MockDate from 'mockdate'
+import { AddOrganization } from '../../../../src/domain/usecases'
+import { AddOrganizationController } from '../../../../src/presentation/controllers/organization'
+import { badRequest, noContent, serverError } from '../../../../src/presentation/helpers'
+import { HttpRequest, Validation } from '../../../../src/presentation/protocols'
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-    name: 'any_name',
-    description: 'any_description',
-    status: 'any_status',
-    startDate: faker.date.recent(),
-    endDate: faker.date.future()
+    name: faker.name.findName(),
+    description: faker.random.words()
   }
 })
 
@@ -25,42 +20,35 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub()
 }
 
-const makeAddProjectStub = (): AddProject => {
-  class AddProjectStub implements AddProject {
-    async add (project: AddProject.Params): Promise<void> {
+const makeAddOrganizationStub = (): AddOrganization => {
+  class AddOrganizationStub implements AddOrganization {
+    async add (organization: AddOrganization.Params): Promise<void> {
       return new Promise(resolve => resolve())
     }
   }
 
-  return new AddProjectStub()
+  return new AddOrganizationStub()
 }
 
 type SutTypes = {
-  sut: AddProjectController
+  sut: AddOrganizationController
   validationStub: Validation
-  addProjectStub: AddProject
+  addOrganizationStub: AddOrganization
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub()
-  const addProjectStub = makeAddProjectStub()
-  const sut = new AddProjectController(validationStub, addProjectStub)
+  const addOrganizationStub = makeAddOrganizationStub()
+
+  const sut = new AddOrganizationController(validationStub, addOrganizationStub)
   return {
     sut,
     validationStub,
-    addProjectStub
+    addOrganizationStub
   }
 }
 
-describe('AddProject Controller', () => {
-  beforeAll(() => {
-    MockDate.set(new Date())
-  })
-
-  afterAll(() => {
-    MockDate.reset()
-  })
-
+describe('AddOrganization Controller', () => {
   test('Should call Validation with correct values', async () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
@@ -76,17 +64,17 @@ describe('AddProject Controller', () => {
     expect(httpResponse).toEqual(badRequest(new Error()))
   })
 
-  test('Should call AddProject with correct values', async () => {
-    const { sut, addProjectStub } = makeSut()
-    const addSpy = jest.spyOn(addProjectStub, 'add')
+  test('Should call AddOrganization with correct values', async () => {
+    const { sut, addOrganizationStub } = makeSut()
+    const addSpy = jest.spyOn(addOrganizationStub, 'add')
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 
-  test('Should return 500 if AddProject throws', async () => {
-    const { sut, addProjectStub } = makeSut()
-    jest.spyOn(addProjectStub, 'add').mockImplementationOnce(() => {
+  test('Should return 500 if AddOrganization throws', async () => {
+    const { sut, addOrganizationStub } = makeSut()
+    jest.spyOn(addOrganizationStub, 'add').mockImplementationOnce(() => {
       throw new Error()
     })
     const httpResponse = await sut.handle(makeFakeRequest())
