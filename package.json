@@ -4,6 +4,7 @@
   "description": "API para quadros kanbans",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig-build.json",
     "start": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
