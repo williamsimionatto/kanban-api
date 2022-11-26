@@ -9,7 +9,7 @@ const makeFakeOrganizationData = (): AddOrganizationMembers.Params => ({
 
 const makeAddOrganizationMembersRepository = (): AddOrganizationMembersRepository => {
   class AddOrganizationMembersRepositoryStub implements AddOrganizationMembersRepository {
-    async add (data: AddOrganizationMembersRepository.Params): Promise<void> {
+    async addMember (data: AddOrganizationMembersRepository.Params): Promise<void> {
       return new Promise(resolve => resolve(null))
     }
   }
@@ -35,7 +35,7 @@ const makeSut = (): SutTypes => {
 describe('DbAddOrganizationMembers Usecase', () => {
   test('Should call AddOrganizationMembersRepository with correct values', async () => {
     const { sut, addOrganizationMembersRepositoryStub } = makeSut()
-    const addSpy = jest.spyOn(addOrganizationMembersRepositoryStub, 'add')
+    const addSpy = jest.spyOn(addOrganizationMembersRepositoryStub, 'addMember')
 
     const organizationData = makeFakeOrganizationData()
     await sut.add(organizationData)
@@ -44,7 +44,7 @@ describe('DbAddOrganizationMembers Usecase', () => {
 
   test('Should throw if AddOrganizationMembersRepository throws', async () => {
     const { sut, addOrganizationMembersRepositoryStub } = makeSut()
-    jest.spyOn(addOrganizationMembersRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(addOrganizationMembersRepositoryStub, 'addMember').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
 
     const organizationData = makeFakeOrganizationData()
     const promise = sut.add(organizationData)

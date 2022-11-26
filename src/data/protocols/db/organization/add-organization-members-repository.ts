@@ -1,7 +1,7 @@
-import { AddOrganizationMembers } from '../../../../domain/usecases/add-organization-members'
+import { AddOrganizationMembers } from '../../../../domain/usecases/'
 
 export interface AddOrganizationMembersRepository {
-  add: (data: AddOrganizationMembersRepository.Params) => Promise<void>
+  addMember: (data: AddOrganizationMembersRepository.Params) => Promise<void>
 }
 
 export namespace AddOrganizationMembersRepository {

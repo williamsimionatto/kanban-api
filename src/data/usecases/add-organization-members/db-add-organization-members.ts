@@ -7,6 +7,6 @@ export class DbAddOrganizationMembers implements AddOrganizationMembers {
   ) {}
 
   async add (data: AddOrganizationMembersRepository.Params): Promise<void> {
-    await this.addOrganizationMembersRepository.add(data)
+    await this.addOrganizationMembersRepository.addMember(data)
   }
 }
