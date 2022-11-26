@@ -41,4 +41,13 @@ describe('DbAddOrganizationMembers Usecase', () => {
     await sut.add(organizationData)
     expect(addSpy).toHaveBeenCalledWith(organizationData)
   })
+
+  test('Should throw if AddOrganizationMembersRepository throws', async () => {
+    const { sut, addOrganizationMembersRepositoryStub } = makeSut()
+    jest.spyOn(addOrganizationMembersRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+
+    const organizationData = makeFakeOrganizationData()
+    const promise = sut.add(organizationData)
+    await expect(promise).rejects.toThrow()
+  })
 })
