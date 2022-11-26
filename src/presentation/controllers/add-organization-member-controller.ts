@@ -1,5 +1,5 @@
 import { AddOrganizationMembers } from '../../domain/usecases'
-import { badRequest, serverError } from '../helpers'
+import { badRequest, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddOrganizationMemberController implements Controller {
@@ -18,7 +18,7 @@ export class AddOrganizationMemberController implements Controller {
       const { ...member } = request
       await this.addOrganizationMembers.add(member)
 
-      return null
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
