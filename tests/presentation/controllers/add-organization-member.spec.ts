@@ -2,7 +2,7 @@ import faker from 'faker'
 import { AddOrganizationMembers } from '../../../src/domain/usecases'
 
 import { AddOrganizationMemberController } from '../../../src/presentation/controllers/add-organization-member-controller'
-import { badRequest } from '../../../src/presentation/helpers'
+import { badRequest, serverError } from '../../../src/presentation/helpers'
 import { Validation } from '../../../src/presentation/protocols'
 
 const makeFakeRequest = (): AddOrganizationMemberController.Request => ({
@@ -68,5 +68,14 @@ describe('AddOrganizationMember Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(addSpy).toHaveBeenCalledWith(httpRequest)
+  })
+
+  test('Should return 500 if AddOrganizationMember throws', async () => {
+    const { sut, addOrganizationMembersStub } = makeSut()
+    jest.spyOn(addOrganizationMembersStub, 'add').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
