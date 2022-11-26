@@ -1,14 +1,14 @@
-import { makeAddOrganizationMembersValidation } from '../../../../src/main/factories/controllers/organization-member'
+import { makeAddProjectMembersValidation } from '../../../../src/main/factories/controllers/project-member'
 import { Validation } from '../../../../src/presentation/protocols'
 import { RequiredFieldValidation, ValidationComposite } from '../../../../src/validation/validators'
 
 jest.mock('../../../../src/validation/validators/validation-composite')
 
-describe('AddOrganizationMemberValidation Factory', () => {
+describe('AddProjectMemberValidation Factory', () => {
   test('Should call ValidationComposite with all validations', () => {
-    makeAddOrganizationMembersValidation()
+    makeAddProjectMembersValidation()
     const validations: Validation[] = []
-    for (const field of ['organizationId', 'accountId']) {
+    for (const field of ['projectId', 'accountId']) {
       validations.push(new RequiredFieldValidation(field))
     }
 

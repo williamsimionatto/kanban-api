@@ -67,46 +67,4 @@ describe('Organization Routes', () => {
         .expect(204)
     })
   })
-
-  describe('POST /organization/:organizationId/member', () => {
-    let organization: any
-    let account: any
-
-    beforeAll(async () => {
-      organization = await organizationCollection.insertOne({
-        name: faker.company.companyName(),
-        description: faker.lorem.paragraph()
-      })
-
-      account = await accountCollection.insertOne({
-        name: faker.name.findName(),
-        email: faker.internet.email(),
-        password: faker.internet.password()
-      })
-    })
-
-    test('Should return 403 on add organization member without accesstoken', async () => {
-      const organizationId = organization.insertedId.toHexString()
-
-      await request(app)
-        .post(`/api/organization/${organizationId}/member`)
-        .send({
-          accountId: account.insertedId.toHexString()
-        })
-        .expect(403)
-    })
-
-    test('Should return 204 on add organization member with valid accessToken', async () => {
-      const organizationId = organization.insertedId.toHexString()
-      const accessToken = await mockAccessToken()
-
-      await request(app)
-        .post(`/api/organization/${organizationId}/member`)
-        .set('x-access-token', accessToken)
-        .send({
-          accountId: account.insertedId.toHexString()
-        })
-        .expect(204)
-    })
-  })
 })

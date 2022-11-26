@@ -1,14 +1,14 @@
-import { AddOrganizationMembers } from '../../domain/usecases'
+import { AddProjectMembers } from '../../domain/usecases'
 import { badRequest, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
-export class AddOrganizationMemberController implements Controller {
+export class AddProjectMemberController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly addOrganizationMembers: AddOrganizationMembers
+    private readonly addProjectMembers: AddProjectMembers
   ) {}
 
-  async handle (request: AddOrganizationMemberController.Request): Promise<HttpResponse> {
+  async handle (request: AddProjectMemberController.Request): Promise<HttpResponse> {
     try {
       const error = this.validation.validate(request)
       if (error) {
@@ -16,7 +16,7 @@ export class AddOrganizationMemberController implements Controller {
       }
 
       const { ...member } = request
-      await this.addOrganizationMembers.add(member)
+      await this.addProjectMembers.add(member)
 
       return noContent()
     } catch (error) {
@@ -25,9 +25,9 @@ export class AddOrganizationMemberController implements Controller {
   }
 }
 
-export namespace AddOrganizationMemberController {
+export namespace AddProjectMemberController {
   export type Request = {
-    organizationId: string
+    projectId: string
     accountId: string
   }
 }

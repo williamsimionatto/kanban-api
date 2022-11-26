@@ -1,9 +1,9 @@
 import { Validation } from '../../../../presentation/protocols'
 import { RequiredFieldValidation, ValidationComposite } from '../../../../validation/validators'
 
-export const makeAddOrganizationMembersValidation = (): ValidationComposite => {
+export const makeAddProjectMembersValidation = (): ValidationComposite => {
   const validations: Validation[] = []
-  for (const field of ['organizationId', 'accountId']) {
+  for (const field of ['projectId', 'accountId']) {
     validations.push(new RequiredFieldValidation(field))
   }
 

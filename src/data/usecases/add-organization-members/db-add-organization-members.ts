@@ -1,12 +1,12 @@
-import { AddOrganizationMembers } from '../../../domain/usecases/add-organization-members'
-import { AddOrganizationMembersRepository } from '../../protocols/db/organization'
+import { AddProjectMembers } from '../../../domain/usecases/add-project-members'
+import { AddProjectMembersRepository } from '../../protocols/db/project'
 
-export class DbAddOrganizationMembers implements AddOrganizationMembers {
+export class DbAddProjectMembers implements AddProjectMembers {
   constructor (
-    private readonly addOrganizationMembersRepository: AddOrganizationMembersRepository
+    private readonly addProjectMembersRepository: AddProjectMembersRepository
   ) {}
 
-  async add (data: AddOrganizationMembersRepository.Params): Promise<void> {
-    await this.addOrganizationMembersRepository.addMember(data)
+  async add (data: AddProjectMembersRepository.Params): Promise<void> {
+    await this.addProjectMembersRepository.addMember(data)
   }
 }
