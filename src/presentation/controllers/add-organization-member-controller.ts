@@ -1,5 +1,5 @@
 import { AddOrganizationMembers } from '../../domain/usecases'
-import { badRequest } from '../helpers'
+import { badRequest, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddOrganizationMemberController implements Controller {
@@ -9,15 +9,19 @@ export class AddOrganizationMemberController implements Controller {
   ) {}
 
   async handle (request: AddOrganizationMemberController.Request): Promise<HttpResponse> {
-    const error = this.validation.validate(request)
-    if (error) {
-      return badRequest(error)
+    try {
+      const error = this.validation.validate(request)
+      if (error) {
+        return badRequest(error)
+      }
+
+      const { ...member } = request
+      await this.addOrganizationMembers.add(member)
+
+      return null
+    } catch (error) {
+      return serverError(error)
     }
-
-    const { organizationId, accountId } = request
-    await this.addOrganizationMembers.add({ organizationId, accountId })
-
-    return new Promise(resolve => resolve(null))
   }
 }
 
