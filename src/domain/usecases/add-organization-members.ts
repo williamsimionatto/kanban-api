@@ -1,5 +1,3 @@
-import { Account } from '../model'
-
 export interface AddOrganizationMembers {
   add: (data: AddOrganizationMembers.Params) => Promise<void>
 }
@@ -7,6 +5,6 @@ export interface AddOrganizationMembers {
 export namespace AddOrganizationMembers {
   export type Params = {
     organizationId: string
-    account: Account
+    accountId: string
   }
 }
