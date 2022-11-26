@@ -10,10 +10,11 @@ export class ProjectMongoRepository implements AddProjectRepository, AddProjectM
 
   async addMember (data: AddProjectMembersRepository.Params): Promise<void> {
     const organizationCollection = await MongoHelper.getCollection('projects')
+
     await organizationCollection.updateOne({
       _id: new ObjectId(data.projectId)
     }, {
-      $push: {
+      $addToSet: {
         members: new ObjectId(data.accountId)
       }
     })

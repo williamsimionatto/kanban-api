@@ -74,6 +74,7 @@ describe('Account Mongo Repository', () => {
       const member = await accounts.findOne({ email: account.email })
 
       await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString() })
+      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString() })
       const projectWithMembers = await projects.findOne({ name: projectParams.name })
 
       expect(projectWithMembers.members.length).toBe(1)
