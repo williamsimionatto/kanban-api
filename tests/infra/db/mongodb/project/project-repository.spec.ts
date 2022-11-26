@@ -8,7 +8,6 @@ import { ProjectMongoRepository } from '../../../../../src/infra/db/mongodb'
 import { AddProject, AddAccount } from '../../../../../src/domain/usecases'
 
 let projects: Collection
-let organizations: Collection
 let accounts: Collection
 
 const makeProjectParams = (): AddProject.Params => ({
@@ -45,8 +44,6 @@ describe('Account Mongo Repository', () => {
     projects = await MongoHelper.getCollection('projects')
     await projects.deleteMany({})
 
-    organizations = await MongoHelper.getCollection('organizations')
-    await organizations.deleteMany({})
     accounts = await MongoHelper.getCollection('accounts')
     await accounts.deleteMany({})
   })
