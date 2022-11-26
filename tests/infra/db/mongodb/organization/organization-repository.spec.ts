@@ -1,13 +1,14 @@
 import { Collection } from 'mongodb'
-import { MongoHelper } from '../../../../../src/infra/db/mongodb/helpers'
-
 import faker from 'faker'
 import MockDate from 'mockdate'
 
-import { OrganizationMongoRepository } from '../../../../../src/infra/db/mongodb'
 import { AddOrganization } from '../../../../../src/domain/usecases'
 
+import { MongoHelper } from '../../../../../src/infra/db/mongodb/helpers'
+import { OrganizationMongoRepository } from '../../../../../src/infra/db/mongodb'
+
 let organizations: Collection
+let accounts: Collection
 
 const makeOrganizationParams = (): AddOrganization.Params => ({
   name: faker.company.companyName(),
@@ -32,6 +33,8 @@ describe('Organization Mongo Repository', () => {
   beforeEach(async () => {
     organizations = await MongoHelper.getCollection('organizations')
     await organizations.deleteMany({})
+    accounts = await MongoHelper.getCollection('accounts')
+    await accounts.deleteMany({})
   })
 
   describe('add()', () => {

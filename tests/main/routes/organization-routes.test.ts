@@ -34,7 +34,7 @@ describe('Organization Routes', () => {
   })
 
   beforeEach(async () => {
-    organizationCollection = await MongoHelper.getCollection('organizatioins')
+    organizationCollection = await MongoHelper.getCollection('organizations')
     await organizationCollection.deleteMany({})
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})

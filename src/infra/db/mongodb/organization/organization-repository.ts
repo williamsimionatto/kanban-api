@@ -3,7 +3,7 @@ import { MongoHelper } from '../helpers'
 
 export class OrganizationMongoRepository implements AddOrganizationRepository {
   async add (data: AddOrganizationRepository.Params): Promise<void> {
-    const projectCollection = await MongoHelper.getCollection('organizations')
-    await projectCollection.insertOne(data)
+    const organizationCollection = await MongoHelper.getCollection('organizations')
+    await organizationCollection.insertOne(data)
   }
 }
