@@ -1,4 +1,5 @@
 import faker from 'faker'
+import { AddOrganizationMembers } from '../../../src/domain/usecases'
 
 import { AddOrganizationMemberController } from '../../../src/presentation/controllers/add-organization-member-controller'
 import { badRequest } from '../../../src/presentation/helpers'
@@ -6,7 +7,7 @@ import { Validation } from '../../../src/presentation/protocols'
 
 const makeFakeRequest = (): AddOrganizationMemberController.Request => ({
   organizationId: faker.datatype.uuid(),
-  memberId: faker.datatype.uuid()
+  accountId: faker.datatype.uuid()
 })
 
 const makeValidationStub = (): Validation => {
@@ -18,17 +19,30 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub()
 }
 
+const makeAddOrganizationMembersStub = (): AddOrganizationMembers => {
+  class AddOrganizationMembersStub implements AddOrganizationMembers {
+    async add (params: AddOrganizationMembers.Params): Promise<void> {
+      return new Promise(resolve => resolve())
+    }
+  }
+
+  return new AddOrganizationMembersStub()
+}
+
 type SutTypes = {
   sut: AddOrganizationMemberController
   validationStub: Validation
+  addOrganizationMembersStub: AddOrganizationMembers
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub()
-  const sut = new AddOrganizationMemberController(validationStub)
+  const addOrganizationMembersStub = makeAddOrganizationMembersStub()
+  const sut = new AddOrganizationMemberController(validationStub, addOrganizationMembersStub)
   return {
     sut,
-    validationStub
+    validationStub,
+    addOrganizationMembersStub
   }
 }
 
@@ -46,5 +60,13 @@ describe('AddOrganizationMember Controller', () => {
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should call AddOrganizationMember with correct values', async () => {
+    const { sut, addOrganizationMembersStub } = makeSut()
+    const addSpy = jest.spyOn(addOrganizationMembersStub, 'add')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(addSpy).toHaveBeenCalledWith(httpRequest)
   })
 })
