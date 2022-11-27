@@ -4,6 +4,7 @@ import { AddProjectMembers } from '../../../src/domain/usecases'
 import { AddProjectMemberController } from '../../../src/presentation/controllers/add-project-member-controller'
 import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
 import { Validation } from '../../../src/presentation/protocols'
+import { CheckProjectByIdSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectMemberController.Request => ({
   projectId: faker.datatype.uuid(),
@@ -33,16 +34,20 @@ type SutTypes = {
   sut: AddProjectMemberController
   validationStub: Validation
   addProjectMembersStub: AddProjectMembers
+  checkProjectByIdSpy: CheckProjectByIdSpy
 }
 
 const makeSut = (): SutTypes => {
+  const checkProjectByIdSpy = new CheckProjectByIdSpy()
   const validationStub = makeValidationStub()
   const addProjectMembersStub = makeAddProjectMembersStub()
-  const sut = new AddProjectMemberController(validationStub, addProjectMembersStub)
+  const sut = new AddProjectMemberController(validationStub, addProjectMembersStub, checkProjectByIdSpy)
+
   return {
     sut,
     validationStub,
-    addProjectMembersStub
+    addProjectMembersStub,
+    checkProjectByIdSpy
   }
 }
 
@@ -83,5 +88,12 @@ describe('AddProjectMember Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should call CheckProjectById with correct values', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(checkProjectByIdSpy.id).toBe(request.projectId)
   })
 })
