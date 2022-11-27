@@ -1,4 +1,4 @@
-import { DbAddProjectMembers } from '../../../../data/usecases/add-organization-members'
+import { DbAddProjectMembers } from '../../../../data/usecases'
 import { AddProjectMembers } from '../../../../domain/usecases'
 import { ProjectMongoRepository } from '../../../../infra/db/mongodb'
 
