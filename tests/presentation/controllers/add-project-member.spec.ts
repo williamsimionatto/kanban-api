@@ -2,7 +2,8 @@ import faker from 'faker'
 import { AddProjectMembers } from '../../../src/domain/usecases'
 
 import { AddProjectMemberController } from '../../../src/presentation/controllers/add-project-member-controller'
-import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
+import { InvalidParamError } from '../../../src/presentation/errors'
+import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
 import { Validation } from '../../../src/presentation/protocols'
 import { CheckProjectByIdSpy } from '../mocks'
 
@@ -95,5 +96,12 @@ describe('AddProjectMember Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(checkProjectByIdSpy.id).toBe(request.projectId)
+  })
+
+  test('Should return 403 if CheckProjectById returns false', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    checkProjectByIdSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('projectId')))
   })
 })
