@@ -124,11 +124,18 @@ describe('Project Routes', () => {
     })
 
     test('Should return 204 on add project member with valid accessToken', async () => {
-      const projectId = project.insertedId.toHexString()
+      const res = await projectCollection.insertOne({
+        name: 'any_name',
+        description: 'any_description',
+        status: 'active',
+        startDate: '2021-01-01',
+        endDate: '2021-12-31'
+      })
+
       const accessToken = await mockAccessToken()
 
       await request(app)
-        .post(`/api/project/${projectId}/member`)
+        .post(`/api/project/${res.insertedId.toHexString()}/member`)
         .set('x-access-token', accessToken)
         .send({
           accountId: account.insertedId.toHexString()
