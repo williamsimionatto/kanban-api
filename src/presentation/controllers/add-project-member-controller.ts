@@ -1,6 +1,7 @@
 import { AddProjectMembers } from '../../domain/usecases'
 import { CheckProjectById } from '../../domain/usecases/check-project-by-id'
-import { badRequest, noContent, serverError } from '../helpers'
+import { InvalidParamError } from '../errors'
+import { badRequest, forbidden, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddProjectMemberController implements Controller {
@@ -17,7 +18,10 @@ export class AddProjectMemberController implements Controller {
         return badRequest(error)
       }
 
-      await this.checkProjectById.checkById(request.projectId)
+      const projectExists = await this.checkProjectById.checkById(request.projectId)
+      if (!projectExists) {
+        return forbidden(new InvalidParamError('projectId'))
+      }
 
       const { ...member } = request
       await this.addProjectMembers.add(member)
