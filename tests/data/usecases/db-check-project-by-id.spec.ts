@@ -35,4 +35,10 @@ describe('DbCheckSurveyById', () => {
     const result = await sut.checkById(projectId)
     expect(result).toBe(false)
   })
+
+  test('Should return true if CheckProjectByIdRepository returns true', async () => {
+    const { sut } = makeSut()
+    const result = await sut.checkById(projectId)
+    expect(result).toBe(true)
+  })
 })
