@@ -1,11 +1,11 @@
 import { Collection } from 'mongodb'
-import { MongoHelper } from '../../../../../src/infra/db/mongodb/helpers'
+import { MongoHelper } from '../../../../src/infra/db/mongodb/helpers'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
 
-import { ProjectMongoRepository } from '../../../../../src/infra/db/mongodb'
-import { AddProject, AddAccount } from '../../../../../src/domain/usecases'
+import { ProjectMongoRepository } from '../../../../src/infra/db/mongodb'
+import { AddProject, AddAccount } from '../../../../src/domain/usecases'
 
 let projects: Collection
 let accounts: Collection
@@ -29,7 +29,7 @@ const makeSut = (): ProjectMongoRepository => {
   return new ProjectMongoRepository()
 }
 
-describe('Account Mongo Repository', () => {
+describe('ProjectMongoRepository', () => {
   beforeAll(async () => {
     MockDate.set(new Date())
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -76,6 +76,15 @@ describe('Account Mongo Repository', () => {
 
       expect(projectWithMembers.members.length).toBe(1)
       expect(projectWithMembers.members).toEqual([member._id])
+    })
+  })
+
+  describe('checkById()', () => {
+    test('Should return true if project exists', async () => {
+      const sut = makeSut()
+      const res = await projects.insertOne(makeProjectParams())
+      const exists = await sut.checkById(res.insertedId.toHexString())
+      expect(exists).toBe(true)
     })
   })
 })
