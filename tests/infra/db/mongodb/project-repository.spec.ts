@@ -1,5 +1,5 @@
 import { Collection } from 'mongodb'
-import { MongoHelper } from '../../../../src/infra/db/mongodb/helpers'
+import { MongoHelper } from '../../../../src/infra/db/mongodb/'
 
 import faker from 'faker'
 import MockDate from 'mockdate'

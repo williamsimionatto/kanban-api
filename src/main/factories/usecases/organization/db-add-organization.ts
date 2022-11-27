@@ -1,4 +1,4 @@
-import { DbAddOrganization } from '../../../../data/usecases/add-organization'
+import { DbAddOrganization } from '../../../../data/usecases'
 import { AddOrganization } from '../../../../domain/usecases'
 import { OrganizationMongoRepository } from '../../../../infra/db/mongodb'
 
