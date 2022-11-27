@@ -3,6 +3,7 @@ import { MongoHelper } from '../../../../src/infra/db/mongodb/helpers'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
+import FakeObjectId from 'bson-objectid'
 
 import { ProjectMongoRepository } from '../../../../src/infra/db/mongodb'
 import { AddProject, AddAccount } from '../../../../src/domain/usecases'
@@ -85,6 +86,12 @@ describe('ProjectMongoRepository', () => {
       const res = await projects.insertOne(makeProjectParams())
       const exists = await sut.checkById(res.insertedId.toHexString())
       expect(exists).toBe(true)
+    })
+
+    test('Should return false if project does not exist', async () => {
+      const sut = makeSut()
+      const exists = await sut.checkById(new FakeObjectId().toHexString())
+      expect(exists).toBe(false)
     })
   })
 })
