@@ -1,5 +1,5 @@
 export interface LoadProjectsByOrganization {
-  load: (organizationId: string) => Promise<LoadProjectsByOrganization.Result>
+  loadByOrganization: (organizationId: string) => Promise<LoadProjectsByOrganization.Result[]>
 }
 
 export namespace LoadProjectsByOrganization {
