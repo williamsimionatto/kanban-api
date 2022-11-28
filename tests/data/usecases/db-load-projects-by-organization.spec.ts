@@ -38,4 +38,13 @@ describe('DbLoadProjectsByOrganization UseCase', () => {
     await sut.loadByOrganization(organizationId)
     expect(loadProjectsByOrganizationRepositorySpy.organizationId).toBe(organizationId)
   })
+
+  test('Should throw if LoadProjectsByOrganizationRepository throws', async () => {
+    const { sut, loadProjectsByOrganizationRepositorySpy } = makeSut()
+    jest.spyOn(loadProjectsByOrganizationRepositorySpy, 'loadByOrganization').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.loadByOrganization(organizationId)
+    await expect(promise).rejects.toThrow()
+  })
 })
