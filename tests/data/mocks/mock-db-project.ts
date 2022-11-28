@@ -1,4 +1,6 @@
 import { CheckProjectByIdRepository } from '../../../src/data/protocols/db/project'
+import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
+import { mockProjectsModel } from '../../domain/mocks'
 
 export class CheckProjectByIdRepositorySpy implements CheckProjectByIdRepository {
   id: string
@@ -6,6 +8,16 @@ export class CheckProjectByIdRepositorySpy implements CheckProjectByIdRepository
 
   async checkById (id: string): Promise<CheckProjectByIdRepository.Result> {
     this.id = id
+    return this.result
+  }
+}
+
+export class LoadProjectsByOrganizationRepositorySpy implements LoadProjectsByOrganization {
+  organizationId: string
+  result = mockProjectsModel()
+
+  async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganization.Result[]> {
+    this.organizationId = organizationId
     return this.result
   }
 }
