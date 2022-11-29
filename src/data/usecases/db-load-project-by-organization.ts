@@ -6,7 +6,7 @@ export class DbLoadProjectsByOrganization implements DbLoadProjectsByOrganizatio
   ) {}
 
   async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganizationRepository.Result[]> {
-    await this.loadProjectsByOrganizationRepository.loadByOrganization(organizationId)
-    return null
+    const projects = await this.loadProjectsByOrganizationRepository.loadByOrganization(organizationId)
+    return projects
   }
 }
