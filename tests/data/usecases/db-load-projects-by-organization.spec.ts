@@ -54,4 +54,10 @@ describe('DbLoadProjectsByOrganization UseCase', () => {
     const projects = await sut.loadByOrganization(organizationId)
     expect(projects).toEqual([])
   })
+
+  test('Should return an array of projects on success', async () => {
+    const { sut, loadProjectsByOrganizationRepositorySpy } = makeSut()
+    const projects = await sut.loadByOrganization(organizationId)
+    expect(projects).toEqual(loadProjectsByOrganizationRepositorySpy.result)
+  })
 })
