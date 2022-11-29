@@ -17,7 +17,7 @@
 * Retorna erro **400** se **name**, **description**, **startDate**, **status**, **organizationId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Adicionar membros a um projeto
+### Feature: Adicionar membros a um projeto
 
 * Como um gestor de projetos
 * Quero poder adicionar membros a um projeto
@@ -37,7 +37,7 @@
 * Retorna erro **400** se **projectId**, **memberId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Listar projetos de uma organização
+### Feature: Listar projetos de uma organização
 
 * Como um gestor de projetos
 * Quero poder listar os projetos de uma organização
