@@ -47,4 +47,11 @@ describe('DbLoadProjectsByOrganization UseCase', () => {
     const promise = sut.loadByOrganization(organizationId)
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return an empty array if LoadProjectsByOrganizationRepository returns an empty array', async () => {
+    const { sut, loadProjectsByOrganizationRepositorySpy } = makeSut()
+    loadProjectsByOrganizationRepositorySpy.result = []
+    const projects = await sut.loadByOrganization(organizationId)
+    expect(projects).toEqual([])
+  })
 })
