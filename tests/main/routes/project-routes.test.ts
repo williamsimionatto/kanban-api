@@ -37,8 +37,10 @@ describe('Project Routes', () => {
   beforeEach(async () => {
     projectCollection = await MongoHelper.getCollection('projects')
     await projectCollection.deleteMany({})
+
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
+
     organizationCollection = await MongoHelper.getCollection('organizations')
     await organizationCollection.deleteMany({})
   })
@@ -48,6 +50,17 @@ describe('Project Routes', () => {
   })
 
   describe('POST /project', () => {
+    let organization: any
+
+    beforeEach(async () => {
+      const organizationData = {
+        name: 'organization name',
+        description: 'organization description'
+      }
+
+      organization = await organizationCollection.insertOne(organizationData)
+    })
+
     test('Should return 403 on add project without accesstoken', async () => {
       await request(app)
         .post('/api/project')
@@ -56,7 +69,8 @@ describe('Project Routes', () => {
           description: 'any_description',
           status: 'active',
           startDate: '2021-01-01',
-          endDate: '2021-01-01'
+          endDate: '2021-01-01',
+          organizationId: organization.insertedId.toHexString()
         })
         .expect(403)
     })
@@ -71,7 +85,8 @@ describe('Project Routes', () => {
           description: 'any_description',
           status: 'active',
           startDate: '2021-01-01',
-          endDate: '2021-12-31'
+          endDate: '2021-12-31',
+          organizationId: organization.insertedId.toHexString()
         })
         .expect(204)
     })
@@ -86,7 +101,8 @@ describe('Project Routes', () => {
           description: 'any_description',
           status: 'active',
           startDate: '2021-01-01',
-          endDate: null
+          endDate: null,
+          organizationId: organization.insertedId.toHexString()
         })
         .expect(204)
     })
@@ -95,14 +111,23 @@ describe('Project Routes', () => {
   describe('POST /project/:projectId/member', () => {
     let project: any
     let account: any
+    let organization: any
 
     beforeAll(async () => {
+      const organizationData = {
+        name: 'organization name',
+        description: 'organization description'
+      }
+
+      organization = await organizationCollection.insertOne(organizationData)
+
       project = await projectCollection.insertOne({
         name: 'any_name',
         description: 'any_description',
         status: 'active',
         startDate: '2021-01-01',
-        endDate: '2021-12-31'
+        endDate: '2021-12-31',
+        organizationId: organization.insertedId.toHexString()
       })
 
       account = await accountCollection.insertOne({
@@ -129,7 +154,8 @@ describe('Project Routes', () => {
         description: 'any_description',
         status: 'active',
         startDate: '2021-01-01',
-        endDate: '2021-12-31'
+        endDate: '2021-12-31',
+        organizationId: organization.insertedId.toHexString()
       })
 
       const accessToken = await mockAccessToken()

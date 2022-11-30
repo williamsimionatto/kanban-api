@@ -9,7 +9,8 @@ const mockAddProjectParams = (): AddProject.Params => ({
   description: faker.random.words(),
   status: faker.random.arrayElement(['active', 'inactive']),
   startDate: faker.date.recent(),
-  endDate: faker.date.future()
+  endDate: faker.date.future(),
+  organizationId: faker.datatype.uuid()
 })
 
 const makeAddProjectRepositoryStub = (): AddProjectRepository => {

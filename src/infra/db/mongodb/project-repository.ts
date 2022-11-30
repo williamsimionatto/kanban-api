@@ -5,7 +5,11 @@ import { MongoHelper } from './mongo-helper'
 export class ProjectMongoRepository implements AddProjectRepository, AddProjectMembersRepository, CheckProjectByIdRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
-    await projectCollection.insertOne(data)
+    const { organizationId, ...projectdataData } = data
+    await projectCollection.insertOne({
+      ...projectdataData,
+      organizationId: new ObjectId(organizationId)
+    })
   }
 
   async addMember (data: AddProjectMembersRepository.Params): Promise<void> {
