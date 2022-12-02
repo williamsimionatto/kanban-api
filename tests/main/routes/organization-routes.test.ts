@@ -5,6 +5,7 @@ import { MongoHelper } from '../../../src/infra/db/mongodb/'
 import app from '../../../src/main/config/app'
 import env from '../../../src/main/config/env'
 import faker from 'faker'
+import FakeObjectId from 'bson-objectid'
 
 let organizationCollection: Collection
 let accountCollection: Collection
@@ -69,6 +70,15 @@ describe('Organization Routes', () => {
       await request(app)
         .get('/api/organization/any_organization_id/projects')
         .expect(403)
+    })
+
+    test('Should return 204 on load projects with valid accessToken and no projects for organization', async () => {
+      const organizationId = new FakeObjectId().toHexString()
+      const accessToken = await mockAccessToken()
+      await request(app)
+        .get(`/api/organization/${organizationId}/projects`)
+        .set('x-access-token', accessToken)
+        .expect(204)
     })
   })
 })
