@@ -1,5 +1,5 @@
 import { LoadProjectsByOrganization } from '../../domain/usecases'
-import { ok } from '../helpers'
+import { noContent, ok } from '../helpers'
 import { Controller, HttpResponse } from '../protocols'
 
 export class LoadProjectsByOrganizationController implements Controller {
@@ -7,7 +7,7 @@ export class LoadProjectsByOrganizationController implements Controller {
 
   async handle (request: LoadProjectsByOrganizationController.Request): Promise<HttpResponse> {
     const projects = await this.loadProjectsByOrganization.loadByOrganization(request.organizationId)
-    return ok(projects)
+    return projects.length ? ok(projects) : noContent()
   }
 }
 
