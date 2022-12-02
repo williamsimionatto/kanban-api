@@ -48,10 +48,6 @@ describe('Organization Routes', () => {
     test('Should return 403 on add organization without accesstoken', async () => {
       await request(app)
         .post('/api/organization')
-        .send({
-          name: faker.company.companyName(),
-          description: faker.lorem.paragraph()
-        })
         .expect(403)
     })
 
@@ -65,6 +61,14 @@ describe('Organization Routes', () => {
           description: faker.lorem.paragraph()
         })
         .expect(204)
+    })
+  })
+
+  describe('/organization/:organizationId/projects', () => {
+    test('Should return 403 on load projects without accessToken', async () => {
+      await request(app)
+        .get('/api/organization/any_organization_id/projects')
+        .expect(403)
     })
   })
 })
