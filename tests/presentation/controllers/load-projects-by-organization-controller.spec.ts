@@ -1,7 +1,7 @@
 import { LoadProjectsByOrganizationController } from '../../../src/presentation/controllers/'
 import faker from 'faker'
 import { LoadProjectsByOrganizationSpy } from '../mocks'
-import { noContent, ok } from '../../../src/presentation/helpers'
+import { noContent, ok, serverError } from '../../../src/presentation/helpers'
 
 const mockRequest = (): LoadProjectsByOrganizationController.Request => ({
   organizationId: faker.datatype.uuid()
@@ -41,5 +41,12 @@ describe('LoadProjectsByOrganization Controller', () => {
     loadProjectsByOrganizationSpy.result = []
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should return 500 if LoadProjectsByOrganization throws', async () => {
+    const { sut, loadProjectsByOrganizationSpy } = makeSut()
+    jest.spyOn(loadProjectsByOrganizationSpy, 'loadByOrganization').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
