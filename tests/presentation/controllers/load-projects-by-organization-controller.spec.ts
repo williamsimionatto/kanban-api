@@ -1,7 +1,7 @@
 import { LoadProjectsByOrganizationController } from '../../../src/presentation/controllers/'
 import faker from 'faker'
 import { LoadProjectsByOrganizationSpy } from '../mocks'
-import { ok } from '../../../src/presentation/helpers'
+import { noContent, ok } from '../../../src/presentation/helpers'
 
 const mockRequest = (): LoadProjectsByOrganizationController.Request => ({
   organizationId: faker.datatype.uuid()
@@ -34,5 +34,12 @@ describe('LoadProjectsByOrganization Controller', () => {
     const { sut, loadProjectsByOrganizationSpy } = makeSut()
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(ok(loadProjectsByOrganizationSpy.result))
+  })
+
+  test('Should return 204 if LoadProjectsByOrganization returns empty', async () => {
+    const { sut, loadProjectsByOrganizationSpy } = makeSut()
+    loadProjectsByOrganizationSpy.result = []
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(noContent())
   })
 })
