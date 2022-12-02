@@ -7,19 +7,7 @@ export const mockProjectModel = (): LoadProjectsByOrganization.Result => ({
   name: faker.name.findName(),
   description: faker.random.words(),
   startDate: faker.date.past(),
-  endDate: faker.date.future(),
-  members: [
-    {
-      id: faker.datatype.uuid(),
-      name: faker.name.findName(),
-      email: faker.internet.email()
-    },
-    {
-      id: faker.datatype.uuid(),
-      name: faker.name.findName(),
-      email: faker.internet.email()
-    }
-  ]
+  endDate: faker.date.future()
 })
 
 export const mockProjectsModel = (): LoadProjectsByOrganization.Result[] => ([
