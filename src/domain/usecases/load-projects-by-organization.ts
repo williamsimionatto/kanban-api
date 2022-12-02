@@ -9,5 +9,6 @@ export namespace LoadProjectsByOrganization {
     description: string
     startDate: Date
     endDate: Date
+    organizationId: string
   }
 }

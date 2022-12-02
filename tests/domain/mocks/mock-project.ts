@@ -1,4 +1,5 @@
 import faker from 'faker'
+import FakeObjectId from 'bson-objectid'
 
 import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
 
@@ -7,10 +8,11 @@ export const mockProjectModel = (): LoadProjectsByOrganization.Result => ({
   name: faker.name.findName(),
   description: faker.random.words(),
   startDate: faker.date.past(),
-  endDate: faker.date.future()
+  endDate: faker.date.future(),
+  organizationId: new FakeObjectId().toHexString()
 })
 
-export const mockProjectsModel = (): LoadProjectsByOrganization.Result[] => ([
+export const mockOrganizationProjectsModel = (): LoadProjectsByOrganization.Result[] => ([
   mockProjectModel(),
   mockProjectModel()
 ])
