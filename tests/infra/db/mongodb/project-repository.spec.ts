@@ -1,11 +1,9 @@
-import { Collection } from 'mongodb'
-import { MongoHelper } from '../../../../src/infra/db/mongodb/'
-
+import FakeObjectId from 'bson-objectid'
 import faker from 'faker'
 import MockDate from 'mockdate'
-import FakeObjectId from 'bson-objectid'
+import { Collection, ObjectId } from 'mongodb'
 
-import { ProjectMongoRepository } from '../../../../src/infra/db/mongodb'
+import { ProjectMongoRepository, MongoHelper } from '../../../../src/infra/db/mongodb'
 import { AddProject, AddAccount } from '../../../../src/domain/usecases'
 
 let projects: Collection
@@ -16,7 +14,8 @@ const makeProjectParams = (): AddProject.Params => ({
   description: faker.random.words(),
   status: faker.random.arrayElement(['active', 'inactive']),
   startDate: faker.date.recent(),
-  endDate: faker.date.future()
+  endDate: faker.date.future(),
+  organizationId: new FakeObjectId().toHexString()
 })
 
 const makeAccountParams = (): AddAccount.Params => ({
@@ -92,6 +91,29 @@ describe('ProjectMongoRepository', () => {
       const sut = makeSut()
       const exists = await sut.checkById(new FakeObjectId().toHexString())
       expect(exists).toBe(false)
+    })
+  })
+
+  describe('loadProjectsByOrganizationId()', () => {
+    test('Should return a projects list on success', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId)
+        }
+      )
+
+      const projectsList = await sut.loadByOrganization(projectParams.organizationId)
+      expect(projectsList.length).toBe(1)
+      expect(projectsList[0].name).toBe(projectParams.name)
+    })
+
+    test('Should return an empty list if there is no projects', async () => {
+      const sut = makeSut()
+      const projectsList = await sut.loadByOrganization(new FakeObjectId().toHexString())
+      expect(projectsList.length).toBe(0)
     })
   })
 })

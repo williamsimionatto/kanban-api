@@ -9,5 +9,6 @@ export namespace AddProject {
     status: string
     startDate: Date
     endDate?: Date
+    organizationId: string
   }
 }

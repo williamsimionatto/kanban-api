@@ -8,7 +8,7 @@ describe('AddProjectValidation Factory', () => {
   test('Should call ValidationComposite with all validations', () => {
     makeAddProjectController()
     const validations: Validation[] = []
-    for (const field of ['name', 'description', 'status', 'startDate']) {
+    for (const field of ['name', 'description', 'status', 'startDate', 'organizationId']) {
       validations.push(new RequiredFieldValidation(field))
     }
 

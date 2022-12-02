@@ -15,13 +15,14 @@ export class AddProjectController implements Controller {
         return badRequest(error)
       }
 
-      const { name, description, status, startDate, endDate } = request
+      const { name, description, status, startDate, endDate, organizationId } = request
       await this.addProject.add({
         name,
         description,
         status,
         startDate,
-        endDate
+        endDate,
+        organizationId
       })
 
       return noContent()
@@ -38,5 +39,6 @@ export namespace AddProjectController {
     status: string
     startDate: Date
     endDate: Date
+    organizationId: string
   }
 }

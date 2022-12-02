@@ -3,7 +3,7 @@ import { IncludesValidation, RequiredFieldValidation, ValidationComposite, DateV
 
 export const makeAddProjectValidation = (): ValidationComposite => {
   const validations: Validation[] = []
-  for (const field of ['name', 'description', 'status', 'startDate']) {
+  for (const field of ['name', 'description', 'status', 'startDate', 'organizationId']) {
     validations.push(new RequiredFieldValidation(field))
   }
 

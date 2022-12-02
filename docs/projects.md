@@ -1,8 +1,10 @@
 ## Feature: Cadastro de projetos
 
-* Como um gestor de projetos
-* Quero poder cadastrar projetos para a minha organização
-* Para que eu possa acompanhar e gerenciar o andamento dos projetos
+```
+Como um gestor de projetos
+Quero poder cadastrar projetos para a minha organização
+Para que eu possa acompanhar e gerenciar o andamento dos projetos
+```
 
 ### ✅ Caso de Sucesso 
 * Dado que eu recebo uma requisição em **POST** para **/api/projects**
@@ -17,11 +19,13 @@
 * Retorna erro **400** se **name**, **description**, **startDate**, **status**, **organizationId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-### Feature: Adicionar membros a um projeto
+## Feature: Adicionar membros a um projeto
 
-* Como um gestor de projetos
-* Quero poder adicionar membros a um projeto
-* Para que o membro possa atuar no projeto
+```
+Como um gestor de projetos
+Quero poder adicionar membros a um projeto
+Para que o membro possa atuar no projeto
+```
 
 ### ✅ Caso de Sucesso
 * Dado que eu recebo uma requisição em **POST** para **/api/projects/{projectId}/members**
@@ -37,11 +41,13 @@
 * Retorna erro **400** se **projectId**, **memberId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-### Feature: Listar projetos de uma organização
+## Feature: Listar projetos de uma organização
 
-* Como um gestor de projetos
-* Quero poder listar os projetos de uma organização
-* Para que eu possa ver os projetos que estão sendo executados
+```
+Como um gestor de projetos
+Quero poder listar os projetos de uma organização
+Para que eu possa ver os projetos que estão sendo executados
+```
 
 ### ✅ Caso de Sucesso
 * Dado que eu recebo uma requisição em **GET** para **/api/organizations/{organizationId}/projects**

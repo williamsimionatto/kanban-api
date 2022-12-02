@@ -9,12 +9,5 @@ export namespace LoadProjectsByOrganization {
     description: string
     startDate: Date
     endDate: Date
-    members: LoadProjectsByOrganization.Member[]
-  }
-
-  export type Member = {
-    id: string
-    name: string
-    email: string
   }
 }

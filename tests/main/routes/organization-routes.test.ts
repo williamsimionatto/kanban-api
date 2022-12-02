@@ -1,13 +1,15 @@
 import { sign } from 'jsonwebtoken'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 import request from 'supertest'
 import { MongoHelper } from '../../../src/infra/db/mongodb/'
 import app from '../../../src/main/config/app'
 import env from '../../../src/main/config/env'
 import faker from 'faker'
+import FakeObjectId from 'bson-objectid'
 
 let organizationCollection: Collection
 let accountCollection: Collection
+let projectCollection: Collection
 
 const mockAccessToken = async (): Promise<string> => {
   const res = await accountCollection.insertOne({
@@ -38,6 +40,9 @@ describe('Organization Routes', () => {
     await organizationCollection.deleteMany({})
     accountCollection = await MongoHelper.getCollection('accounts')
     await accountCollection.deleteMany({})
+
+    projectCollection = await MongoHelper.getCollection('projects')
+    await projectCollection.deleteMany({})
   })
 
   afterAll(async () => {
@@ -48,10 +53,6 @@ describe('Organization Routes', () => {
     test('Should return 403 on add organization without accesstoken', async () => {
       await request(app)
         .post('/api/organization')
-        .send({
-          name: faker.company.companyName(),
-          description: faker.lorem.paragraph()
-        })
         .expect(403)
     })
 
@@ -65,6 +66,44 @@ describe('Organization Routes', () => {
           description: faker.lorem.paragraph()
         })
         .expect(204)
+    })
+  })
+
+  describe('/organization/:organizationId/projects', () => {
+    test('Should return 403 on load projects without accessToken', async () => {
+      await request(app)
+        .get('/api/organization/any_organization_id/projects')
+        .expect(403)
+    })
+
+    test('Should return 204 on load projects with valid accessToken and no exists projects for organization', async () => {
+      const organizationId = new FakeObjectId().toHexString()
+      const accessToken = await mockAccessToken()
+      await request(app)
+        .get(`/api/organization/${organizationId}/projects`)
+        .set('x-access-token', accessToken)
+        .expect(204)
+    })
+
+    test('Should return 200 on load projects with valid accessToken and exists projects for organization', async () => {
+      const accessToken = await mockAccessToken()
+      const organization = await organizationCollection.insertOne({
+        name: faker.company.companyName(),
+        description: faker.lorem.paragraph()
+      })
+
+      await projectCollection.insertOne({
+        name: faker.commerce.productName(),
+        description: faker.lorem.paragraph(),
+        status: 'active',
+        startDate: new Date(),
+        organizationId: new ObjectId(organization.insertedId.toHexString())
+      })
+
+      await request(app)
+        .get(`/api/organization/${organization.insertedId.toHexString()}/projects`)
+        .set('x-access-token', accessToken)
+        .expect(200)
     })
   })
 })
