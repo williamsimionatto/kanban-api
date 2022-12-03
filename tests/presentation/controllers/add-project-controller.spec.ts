@@ -11,7 +11,6 @@ const makeFakeRequest = (): AddProjectController.Request => ({
   description: 'any_description',
   status: 'any_status',
   startDate: faker.date.recent(),
-  endDate: faker.date.future(),
   organizationId: faker.datatype.uuid()
 })
 

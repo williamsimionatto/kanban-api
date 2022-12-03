@@ -20,8 +20,8 @@ export class AddProjectController implements Controller {
         name,
         description,
         status,
-        startDate,
-        endDate,
+        startDate: new Date(startDate),
+        endDate: endDate ? new Date(endDate) : undefined,
         organizationId
       })
 
@@ -38,7 +38,7 @@ export namespace AddProjectController {
     description: string
     status: string
     startDate: Date
-    endDate: Date
+    endDate?: Date
     organizationId: string
   }
 }
