@@ -28,4 +28,18 @@ describe('DbCheckOrganizationById', () => {
     await sut.checkById(organizationId)
     expect(checkOrganizationByIdRepositorySpy.id).toBe(organizationId)
   })
+
+  test('Should return false if CheckOrganizationByIdRepository returns false', async () => {
+    const { sut, checkOrganizationByIdRepositorySpy } = makeSut()
+    checkOrganizationByIdRepositorySpy.result = false
+    const result = await sut.checkById(organizationId)
+    expect(result).toBe(false)
+  })
+
+  test('Should return true if CheckOrganizationByIdRepository returns true', async () => {
+    const { sut, checkOrganizationByIdRepositorySpy } = makeSut()
+    checkOrganizationByIdRepositorySpy.result = true
+    const result = await sut.checkById(organizationId)
+    expect(result).toBe(true)
+  })
 })
