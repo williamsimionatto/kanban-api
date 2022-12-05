@@ -4,6 +4,7 @@ import { badRequest, noContent, serverError } from '../../../src/presentation/he
 import faker from 'faker'
 import MockDate from 'mockdate'
 import { AddProjectSpy, ValidationSpy } from '../mocks'
+import { CheckOrganizationByIdRepositorySpy } from '../../data/mocks'
 
 const makeFakeRequest = (): AddProjectController.Request => ({
   name: 'any_name',
@@ -17,16 +18,19 @@ type SutTypes = {
   sut: AddProjectController
   validationSpy: ValidationSpy
   addProjectSpy: AddProjectSpy
+  checkOrganizationByIdSpy: CheckOrganizationByIdRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const addProjectSpy = new AddProjectSpy()
-  const sut = new AddProjectController(validationSpy, addProjectSpy)
+  const checkOrganizationByIdSpy = new CheckOrganizationByIdRepositorySpy()
+  const sut = new AddProjectController(validationSpy, addProjectSpy, checkOrganizationByIdSpy)
   return {
     sut,
     validationSpy,
-    addProjectSpy
+    addProjectSpy,
+    checkOrganizationByIdSpy
   }
 }
 
@@ -73,5 +77,12 @@ describe('AddProject Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should call CheckOrganizationById with correct values', async () => {
+    const { sut, checkOrganizationByIdSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(checkOrganizationByIdSpy.id).toEqual(request.organizationId)
   })
 })
