@@ -1,11 +1,11 @@
-import { AddProjectController } from '../../../src/presentation/controllers'
-import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
-
 import faker from 'faker'
 import MockDate from 'mockdate'
-import { AddProjectSpy, ValidationSpy } from '../mocks'
-import { CheckOrganizationByIdRepositorySpy } from '../../data/mocks'
+
+import { AddProjectController } from '../../../src/presentation/controllers'
 import { InvalidParamError } from '../../../src/presentation/errors'
+import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
+
+import { AddProjectSpy, CheckOrganizationByIdSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectController.Request => ({
   name: faker.commerce.productName(),
@@ -19,13 +19,13 @@ type SutTypes = {
   sut: AddProjectController
   validationSpy: ValidationSpy
   addProjectSpy: AddProjectSpy
-  checkOrganizationByIdSpy: CheckOrganizationByIdRepositorySpy
+  checkOrganizationByIdSpy: CheckOrganizationByIdSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const addProjectSpy = new AddProjectSpy()
-  const checkOrganizationByIdSpy = new CheckOrganizationByIdRepositorySpy()
+  const checkOrganizationByIdSpy = new CheckOrganizationByIdSpy()
   const sut = new AddProjectController(validationSpy, addProjectSpy, checkOrganizationByIdSpy)
   return {
     sut,

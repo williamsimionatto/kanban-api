@@ -1,4 +1,6 @@
-export class CheckOrganizationById implements CheckOrganizationById {
+import { CheckOrganizationById } from '../../../src/domain/usecases'
+
+export class CheckOrganizationByIdSpy implements CheckOrganizationById {
   id: string
   result = true
 

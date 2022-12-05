@@ -1,5 +1,4 @@
-import { CheckOrganizationById } from '../../../tests/presentation/mocks'
-import { AddProject } from '../../domain/usecases'
+import { AddProject, CheckOrganizationById } from '../../domain/usecases'
 import { InvalidParamError } from '../errors'
 import { badRequest, forbidden, noContent, serverError } from '../helpers/http-helper'
 import { Controller, HttpResponse, Validation } from '../protocols'
