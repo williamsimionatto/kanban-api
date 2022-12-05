@@ -1,10 +1,10 @@
-import { AddProject } from '../../../src/domain/usecases'
 import { AddProjectController } from '../../../src/presentation/controllers'
 import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
 import { Validation } from '../../../src/presentation/protocols'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
+import { AddProjectSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectController.Request => ({
   name: 'any_name',
@@ -23,30 +23,20 @@ const makeValidationStub = (): Validation => {
   return new ValidationStub()
 }
 
-const makeAddProjectStub = (): AddProject => {
-  class AddProjectStub implements AddProject {
-    async add (project: AddProject.Params): Promise<void> {
-      return new Promise(resolve => resolve())
-    }
-  }
-
-  return new AddProjectStub()
-}
-
 type SutTypes = {
   sut: AddProjectController
   validationStub: Validation
-  addProjectStub: AddProject
+  addProjectSpy: AddProjectSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidationStub()
-  const addProjectStub = makeAddProjectStub()
-  const sut = new AddProjectController(validationStub, addProjectStub)
+  const addProjectSpy = new AddProjectSpy()
+  const sut = new AddProjectController(validationStub, addProjectSpy)
   return {
     sut,
     validationStub,
-    addProjectStub
+    addProjectSpy
   }
 }
 
@@ -75,16 +65,15 @@ describe('AddProject Controller', () => {
   })
 
   test('Should call AddProject with correct values', async () => {
-    const { sut, addProjectStub } = makeSut()
-    const addSpy = jest.spyOn(addProjectStub, 'add')
-    const httpRequest = makeFakeRequest()
-    await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest)
+    const { sut, addProjectSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(addProjectSpy.params).toEqual({ ...request })
   })
 
   test('Should return 500 if AddProject throws', async () => {
-    const { sut, addProjectStub } = makeSut()
-    jest.spyOn(addProjectStub, 'add').mockImplementationOnce(() => {
+    const { sut, addProjectSpy } = makeSut()
+    jest.spyOn(addProjectSpy, 'add').mockImplementationOnce(() => {
       throw new Error()
     })
     const httpResponse = await sut.handle(makeFakeRequest())
