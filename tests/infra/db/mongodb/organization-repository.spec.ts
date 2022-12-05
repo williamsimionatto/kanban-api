@@ -1,13 +1,13 @@
-import { Collection } from 'mongodb'
 import faker from 'faker'
 import MockDate from 'mockdate'
+import FakeObjectId from 'bson-objectid'
+import { Collection } from 'mongodb'
 
 import { AddOrganization } from '../../../../src/domain/usecases'
 
 import { MongoHelper, OrganizationMongoRepository } from '../../../../src/infra/db/mongodb'
 
 let organizations: Collection
-let accounts: Collection
 
 const makeOrganizationParams = (): AddOrganization.Params => ({
   name: faker.company.companyName(),
@@ -18,7 +18,7 @@ const makeSut = (): OrganizationMongoRepository => {
   return new OrganizationMongoRepository()
 }
 
-describe('Organization Mongo Repository', () => {
+describe('OrganizationMongoRepository', () => {
   beforeAll(async () => {
     MockDate.set(new Date())
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -32,8 +32,6 @@ describe('Organization Mongo Repository', () => {
   beforeEach(async () => {
     organizations = await MongoHelper.getCollection('organizations')
     await organizations.deleteMany({})
-    accounts = await MongoHelper.getCollection('accounts')
-    await accounts.deleteMany({})
   })
 
   describe('add()', () => {
@@ -43,6 +41,22 @@ describe('Organization Mongo Repository', () => {
       await sut.add(organizationParams)
       const organization = await organizations.findOne({ name: organizationParams.name })
       expect(organization).toBeTruthy()
+    })
+  })
+
+  describe('checkById()', () => {
+    test('Should return true if organization exists', async () => {
+      const sut = makeSut()
+      const organizationParams = makeOrganizationParams()
+      const res = await organizations.insertOne(organizationParams)
+      const organization = await sut.checkById(res.insertedId.toHexString())
+      expect(organization).toBe(true)
+    })
+
+    test('Should return false if organization does not exist', async () => {
+      const sut = makeSut()
+      const exists = await sut.checkById(new FakeObjectId().toHexString())
+      expect(exists).toBe(false)
     })
   })
 })
