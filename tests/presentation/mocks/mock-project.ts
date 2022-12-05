@@ -1,4 +1,4 @@
-import { LoadProjectsByOrganization } from '../../../src/domain/usecases'
+import { AddProject, LoadProjectsByOrganization } from '../../../src/domain/usecases'
 import { CheckProjectById } from '../../../src/domain/usecases/check-project-by-id'
 import { mockOrganizationProjectsModel } from '../../domain/mocks'
 
@@ -19,5 +19,13 @@ export class LoadProjectsByOrganizationSpy implements LoadProjectsByOrganization
   async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganization.Result[]> {
     this.organizationId = organizationId
     return this.result
+  }
+}
+
+export class AddProjectSpy implements AddProject {
+  params: AddProject.Params
+
+  async add (project: AddProject.Params): Promise<void> {
+    this.params = project
   }
 }

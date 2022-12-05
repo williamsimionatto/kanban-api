@@ -18,7 +18,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('DbCheckSurveyById', () => {
+describe('DbCheckProjectById', () => {
   beforeAll(async () => {
     projectId = faker.datatype.uuid()
   })

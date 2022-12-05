@@ -1,11 +1,13 @@
-import { AddProject } from '../../domain/usecases'
-import { badRequest, noContent, serverError } from '../helpers/http-helper'
+import { AddProject, CheckOrganizationById } from '../../domain/usecases'
+import { InvalidParamError } from '../errors'
+import { badRequest, forbidden, noContent, serverError } from '../helpers/http-helper'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddProjectController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly addProject: AddProject
+    private readonly addProject: AddProject,
+    private readonly checkOrganizationById: CheckOrganizationById
   ) {}
 
   async handle (request: AddProjectController.Request): Promise<HttpResponse> {
@@ -16,6 +18,12 @@ export class AddProjectController implements Controller {
       }
 
       const { name, description, status, startDate, endDate, organizationId } = request
+      const organizationExists = await this.checkOrganizationById.checkById(organizationId)
+
+      if (!organizationExists) {
+        return forbidden(new InvalidParamError('organizationId'))
+      }
+
       await this.addProject.add({
         name,
         description,
