@@ -1,10 +1,9 @@
 import { AddProjectController } from '../../../src/presentation/controllers'
 import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
-import { Validation } from '../../../src/presentation/protocols'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
-import { AddProjectSpy } from '../mocks'
+import { AddProjectSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectController.Request => ({
   name: 'any_name',
@@ -14,28 +13,19 @@ const makeFakeRequest = (): AddProjectController.Request => ({
   organizationId: faker.datatype.uuid()
 })
 
-const makeValidationStub = (): Validation => {
-  class ValidationStub implements Validation {
-    validate (input: any): Error {
-      return null
-    }
-  }
-  return new ValidationStub()
-}
-
 type SutTypes = {
   sut: AddProjectController
-  validationStub: Validation
+  validationSpy: ValidationSpy
   addProjectSpy: AddProjectSpy
 }
 
 const makeSut = (): SutTypes => {
-  const validationStub = makeValidationStub()
+  const validationSpy = new ValidationSpy()
   const addProjectSpy = new AddProjectSpy()
-  const sut = new AddProjectController(validationStub, addProjectSpy)
+  const sut = new AddProjectController(validationSpy, addProjectSpy)
   return {
     sut,
-    validationStub,
+    validationSpy,
     addProjectSpy
   }
 }
@@ -50,16 +40,15 @@ describe('AddProject Controller', () => {
   })
 
   test('Should call Validation with correct values', async () => {
-    const { sut, validationStub } = makeSut()
-    const validateSpy = jest.spyOn(validationStub, 'validate')
-    const httpRequest = makeFakeRequest()
-    await sut.handle(httpRequest)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest)
+    const { sut, validationSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(validationSpy.input).toEqual(request)
   })
 
   test('Should return 400 if Validation returns an error', async () => {
-    const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new Error()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
   })
