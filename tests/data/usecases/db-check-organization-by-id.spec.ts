@@ -42,4 +42,11 @@ describe('DbCheckOrganizationById', () => {
     const result = await sut.checkById(organizationId)
     expect(result).toBe(true)
   })
+
+  test('Should throw if CheckOrganizationByIdRepository throws', async () => {
+    const { sut, checkOrganizationByIdRepositorySpy } = makeSut()
+    jest.spyOn(checkOrganizationByIdRepositorySpy, 'checkById').mockImplementationOnce(() => { throw new Error() })
+    const promise = sut.checkById(organizationId)
+    await expect(promise).rejects.toThrow()
+  })
 })
