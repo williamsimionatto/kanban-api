@@ -1,15 +1,16 @@
 import { AddProjectController } from '../../../src/presentation/controllers'
-import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
+import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
 
 import faker from 'faker'
 import MockDate from 'mockdate'
 import { AddProjectSpy, ValidationSpy } from '../mocks'
 import { CheckOrganizationByIdRepositorySpy } from '../../data/mocks'
+import { InvalidParamError } from '../../../src/presentation/errors'
 
 const makeFakeRequest = (): AddProjectController.Request => ({
-  name: 'any_name',
-  description: 'any_description',
-  status: 'any_status',
+  name: faker.commerce.productName(),
+  description: faker.commerce.productDescription(),
+  status: faker.random.arrayElement(['active', 'inactive', 'done']),
   startDate: faker.date.recent(),
   organizationId: faker.datatype.uuid()
 })
@@ -84,5 +85,12 @@ describe('AddProject Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(checkOrganizationByIdSpy.id).toEqual(request.organizationId)
+  })
+
+  test('Should return 403 if CheckOrganizationById returns false', async () => {
+    const { sut, checkOrganizationByIdSpy } = makeSut()
+    checkOrganizationByIdSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('organizationId')))
   })
 })
