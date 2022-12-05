@@ -1,6 +1,7 @@
 import { CheckOrganizationById } from '../../../tests/presentation/mocks'
 import { AddProject } from '../../domain/usecases'
-import { badRequest, noContent, serverError } from '../helpers/http-helper'
+import { InvalidParamError } from '../errors'
+import { badRequest, forbidden, noContent, serverError } from '../helpers/http-helper'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddProjectController implements Controller {
@@ -18,7 +19,11 @@ export class AddProjectController implements Controller {
       }
 
       const { name, description, status, startDate, endDate, organizationId } = request
-      await this.checkOrganizationById.checkById(organizationId)
+      const organizationExists = await this.checkOrganizationById.checkById(organizationId)
+
+      if (!organizationExists) {
+        return forbidden(new InvalidParamError('organizationId'))
+      }
 
       await this.addProject.add({
         name,
