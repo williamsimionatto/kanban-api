@@ -1,4 +1,5 @@
 import { CheckProjectByIdRepository } from '../../../src/data/protocols/db/project'
+import { CheckProjectMember } from '../../../src/domain/usecases'
 import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
 import { mockOrganizationProjectsModel } from '../../domain/mocks'
 
@@ -18,6 +19,16 @@ export class LoadProjectsByOrganizationRepositorySpy implements LoadProjectsByOr
 
   async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganization.Result[]> {
     this.organizationId = organizationId
+    return this.result
+  }
+}
+
+export class CheckProjectMemberRepositorySpy implements CheckProjectMember {
+  params: CheckProjectMember.Params
+  result = true
+
+  async checkMember (params: CheckProjectMember.Params): Promise<boolean> {
+    this.params = params
     return this.result
   }
 }
