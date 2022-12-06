@@ -25,9 +25,22 @@ describe('DbCheckProjectMember', () => {
     memberId = faker.datatype.uuid()
   })
 
-  test('Should call CheckProjectMember with correct values', async () => {
+  test('Should call CheckProjectMemberRepository with correct values', async () => {
     const { sut, checkProjectMemberRepositorySpy } = makeSut()
     await sut.checkMember({ projectId, memberId })
     expect(checkProjectMemberRepositorySpy.params).toEqual({ projectId, memberId })
+  })
+
+  test('Should return false if CheckProjectMemberRepository returns false', async () => {
+    const { sut, checkProjectMemberRepositorySpy } = makeSut()
+    checkProjectMemberRepositorySpy.result = false
+    const result = await sut.checkMember({ projectId, memberId })
+    expect(result).toBe(false)
+  })
+
+  test('Should return true if CheckProjectMemberRepository returns true', async () => {
+    const { sut } = makeSut()
+    const result = await sut.checkMember({ projectId, memberId })
+    expect(result).toBe(true)
   })
 })

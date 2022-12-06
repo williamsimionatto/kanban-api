@@ -5,7 +5,6 @@ export class DbCheckProjectMember implements CheckProjectMember {
   constructor (private readonly checkProjectMemberRepository: CheckProjectMemberRepository) {}
 
   async checkMember (params: CheckProjectMember.Params): Promise<CheckProjectMember.Result> {
-    await this.checkProjectMemberRepository.checkMember(params)
-    return null
+    return await this.checkProjectMemberRepository.checkMember(params)
   }
 }
