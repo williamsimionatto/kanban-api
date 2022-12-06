@@ -43,4 +43,11 @@ describe('DbCheckProjectMember', () => {
     const result = await sut.checkMember({ projectId, memberId })
     expect(result).toBe(true)
   })
+
+  test('Should throw if CheckProjectMemberRepository throws', async () => {
+    const { sut, checkProjectMemberRepositorySpy } = makeSut()
+    jest.spyOn(checkProjectMemberRepositorySpy, 'checkMember').mockRejectedValueOnce(new Error())
+    const promise = sut.checkMember({ projectId, memberId })
+    await expect(promise).rejects.toThrow()
+  })
 })
