@@ -1,25 +1,16 @@
 import faker from 'faker'
-import { AddProjectMembers } from '../../../src/domain/usecases'
 
-import { AddProjectMemberController } from '../../../src/presentation/controllers/add-project-member-controller'
+import { AddProjectMembers } from '../../../src/domain/usecases'
+import { AddProjectMemberController } from '../../../src/presentation/controllers'
 import { InvalidParamError } from '../../../src/presentation/errors'
 import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
-import { Validation } from '../../../src/presentation/protocols'
-import { CheckProjectByIdSpy } from '../mocks'
+
+import { CheckProjectByIdSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectMemberController.Request => ({
   projectId: faker.datatype.uuid(),
   accountId: faker.datatype.uuid()
 })
-
-const makeValidationStub = (): Validation => {
-  class ValidationStub implements Validation {
-    validate (input: any): Error {
-      return null
-    }
-  }
-  return new ValidationStub()
-}
 
 const makeAddProjectMembersStub = (): AddProjectMembers => {
   class AddProjectMembersStub implements AddProjectMembers {
@@ -33,20 +24,20 @@ const makeAddProjectMembersStub = (): AddProjectMembers => {
 
 type SutTypes = {
   sut: AddProjectMemberController
-  validationStub: Validation
+  validationSpy: ValidationSpy
   addProjectMembersStub: AddProjectMembers
   checkProjectByIdSpy: CheckProjectByIdSpy
 }
 
 const makeSut = (): SutTypes => {
   const checkProjectByIdSpy = new CheckProjectByIdSpy()
-  const validationStub = makeValidationStub()
+  const validationSpy = new ValidationSpy()
   const addProjectMembersStub = makeAddProjectMembersStub()
-  const sut = new AddProjectMemberController(validationStub, addProjectMembersStub, checkProjectByIdSpy)
+  const sut = new AddProjectMemberController(validationSpy, addProjectMembersStub, checkProjectByIdSpy)
 
   return {
     sut,
-    validationStub,
+    validationSpy,
     addProjectMembersStub,
     checkProjectByIdSpy
   }
@@ -54,16 +45,15 @@ const makeSut = (): SutTypes => {
 
 describe('AddProjectMember Controller', () => {
   test('Should call Validation with correct values', async () => {
-    const { sut, validationStub } = makeSut()
-    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const { sut, validationSpy } = makeSut()
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest)
+    expect(validationSpy.input).toEqual(httpRequest)
   })
 
   test('Should return 400 if Validation returns an error', async () => {
-    const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new Error())
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new Error()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
   })

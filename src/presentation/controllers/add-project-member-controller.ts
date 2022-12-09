@@ -13,18 +13,18 @@ export class AddProjectMemberController implements Controller {
 
   async handle (request: AddProjectMemberController.Request): Promise<HttpResponse> {
     try {
+      const { projectId, accountId } = request
       const error = this.validation.validate(request)
       if (error) {
         return badRequest(error)
       }
 
-      const projectExists = await this.checkProjectById.checkById(request.projectId)
+      const projectExists = await this.checkProjectById.checkById(projectId)
       if (!projectExists) {
         return forbidden(new InvalidParamError('projectId'))
       }
 
-      const { ...member } = request
-      await this.addProjectMembers.add(member)
+      await this.addProjectMembers.add({ projectId, accountId })
 
       return noContent()
     } catch (error) {
