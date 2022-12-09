@@ -139,5 +139,27 @@ describe('ProjectMongoRepository', () => {
 
       expect(exists).toBe(true)
     })
+
+    test('Should return false if member does not exist', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const account = await accounts.insertOne(makeAccountParams())
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId),
+          members: [
+            new FakeObjectId().toHexString()
+          ]
+        }
+      )
+
+      const exists = await sut.checkMember({
+        projectId: project.insertedId.toHexString(),
+        memberId: account.insertedId.toHexString()
+      })
+
+      expect(exists).toBe(false)
+    })
   })
 })
