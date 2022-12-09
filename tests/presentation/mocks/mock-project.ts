@@ -40,7 +40,7 @@ export class AddProjectMembersSpy implements AddProjectMembers {
 
 export class CheckProjectMemberSpy implements CheckProjectMember {
   params: CheckProjectMember.Params
-  result = true
+  result = false
 
   async checkMember (params: CheckProjectMember.Params): Promise<boolean> {
     this.params = params

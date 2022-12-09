@@ -101,4 +101,11 @@ describe('AddProjectMember Controller', () => {
       memberId: request.accountId
     })
   })
+
+  test('Should return 403 if CheckProjectMember returns true', async () => {
+    const { sut, checkProjectMemberSpy } = makeSut()
+    checkProjectMemberSpy.result = true
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('memberId')))
+  })
 })
