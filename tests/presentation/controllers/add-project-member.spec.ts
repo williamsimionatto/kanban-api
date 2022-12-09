@@ -1,44 +1,34 @@
 import faker from 'faker'
 
-import { AddProjectMembers } from '../../../src/domain/usecases'
 import { AddProjectMemberController } from '../../../src/presentation/controllers'
 import { InvalidParamError } from '../../../src/presentation/errors'
 import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
 
-import { CheckProjectByIdSpy, ValidationSpy } from '../mocks'
+import { throwError } from '../../domain/mocks'
+import { AddProjectMembersSpy, CheckProjectByIdSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectMemberController.Request => ({
   projectId: faker.datatype.uuid(),
   accountId: faker.datatype.uuid()
 })
 
-const makeAddProjectMembersStub = (): AddProjectMembers => {
-  class AddProjectMembersStub implements AddProjectMembers {
-    async add (params: AddProjectMembers.Params): Promise<void> {
-      return new Promise(resolve => resolve())
-    }
-  }
-
-  return new AddProjectMembersStub()
-}
-
 type SutTypes = {
   sut: AddProjectMemberController
   validationSpy: ValidationSpy
-  addProjectMembersStub: AddProjectMembers
+  addProjectMembersSpy: AddProjectMembersSpy
   checkProjectByIdSpy: CheckProjectByIdSpy
 }
 
 const makeSut = (): SutTypes => {
   const checkProjectByIdSpy = new CheckProjectByIdSpy()
   const validationSpy = new ValidationSpy()
-  const addProjectMembersStub = makeAddProjectMembersStub()
-  const sut = new AddProjectMemberController(validationSpy, addProjectMembersStub, checkProjectByIdSpy)
+  const addProjectMembersSpy = new AddProjectMembersSpy()
+  const sut = new AddProjectMemberController(validationSpy, addProjectMembersSpy, checkProjectByIdSpy)
 
   return {
     sut,
     validationSpy,
-    addProjectMembersStub,
+    addProjectMembersSpy,
     checkProjectByIdSpy
   }
 }
@@ -59,18 +49,15 @@ describe('AddProjectMember Controller', () => {
   })
 
   test('Should call AddProjectMember with correct values', async () => {
-    const { sut, addProjectMembersStub } = makeSut()
-    const addSpy = jest.spyOn(addProjectMembersStub, 'add')
-    const httpRequest = makeFakeRequest()
-    await sut.handle(httpRequest)
-    expect(addSpy).toHaveBeenCalledWith(httpRequest)
+    const { sut, addProjectMembersSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(addProjectMembersSpy.params).toEqual(request)
   })
 
   test('Should return 500 if AddProjectMember throws', async () => {
-    const { sut, addProjectMembersStub } = makeSut()
-    jest.spyOn(addProjectMembersStub, 'add').mockImplementationOnce(() => {
-      throw new Error()
-    })
+    const { sut, addProjectMembersSpy } = makeSut()
+    jest.spyOn(addProjectMembersSpy, 'add').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
@@ -97,9 +84,7 @@ describe('AddProjectMember Controller', () => {
 
   test('Should return 500 if CheckProjectById throws', async () => {
     const { sut, checkProjectByIdSpy } = makeSut()
-    jest.spyOn(checkProjectByIdSpy, 'checkById').mockImplementationOnce(() => {
-      throw new Error()
-    })
+    jest.spyOn(checkProjectByIdSpy, 'checkById').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
