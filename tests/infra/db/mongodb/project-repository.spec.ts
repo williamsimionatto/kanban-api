@@ -9,6 +9,13 @@ import { AddProject, AddAccount } from '../../../../src/domain/usecases'
 let projects: Collection
 let accounts: Collection
 
+const makeAccountParams = (): AddAccount.Params => ({
+  name: faker.name.findName(),
+  email: faker.internet.email(),
+  password: faker.internet.password(),
+  organizationId: faker.datatype.uuid()
+})
+
 const makeProjectParams = (): AddProject.Params => ({
   name: faker.name.firstName(),
   description: faker.random.words(),
@@ -16,13 +23,6 @@ const makeProjectParams = (): AddProject.Params => ({
   startDate: faker.date.recent(),
   endDate: faker.date.future(),
   organizationId: new FakeObjectId().toHexString()
-})
-
-const makeAccountParams = (): AddAccount.Params => ({
-  name: faker.name.findName(),
-  email: faker.internet.email(),
-  password: faker.internet.password(),
-  organizationId: faker.datatype.uuid()
 })
 
 const makeSut = (): ProjectMongoRepository => {
@@ -114,6 +114,30 @@ describe('ProjectMongoRepository', () => {
       const sut = makeSut()
       const projectsList = await sut.loadByOrganization(new FakeObjectId().toHexString())
       expect(projectsList.length).toBe(0)
+    })
+  })
+
+  describe('checkMember()', () => {
+    test('Should return true if member exists', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const account = await accounts.insertOne(makeAccountParams())
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId),
+          members: [
+            new ObjectId(account.insertedId.toHexString())
+          ]
+        }
+      )
+
+      const exists = await sut.checkMember({
+        projectId: project.insertedId.toHexString(),
+        memberId: account.insertedId.toHexString()
+      })
+
+      expect(exists).toBe(true)
     })
   })
 })
