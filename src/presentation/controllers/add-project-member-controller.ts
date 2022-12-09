@@ -25,7 +25,10 @@ export class AddProjectMemberController implements Controller {
         return forbidden(new InvalidParamError('projectId'))
       }
 
-      await this.checkProjectMember.checkMember({ projectId, memberId: accountId })
+      const isMember = await this.checkProjectMember.checkMember({ projectId, memberId: accountId })
+      if (isMember) {
+        return forbidden(new InvalidParamError('memberId'))
+      }
 
       await this.addProjectMembers.add({ projectId, accountId })
 
