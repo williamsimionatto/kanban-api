@@ -108,4 +108,11 @@ describe('AddProjectMember Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('memberId')))
   })
+
+  test('Should return 500 if CheckProjectMember throws', async () => {
+    const { sut, checkProjectMemberSpy } = makeSut()
+    jest.spyOn(checkProjectMemberSpy, 'checkMember').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
