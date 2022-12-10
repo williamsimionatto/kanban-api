@@ -1,4 +1,4 @@
-import { CheckProjectByIdRepository } from '../../../src/data/protocols/db/project'
+import { AddProjectMembersRepository, CheckProjectByIdRepository } from '../../../src/data/protocols/db/project'
 import { CheckProjectMember } from '../../../src/domain/usecases'
 import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
 import { mockOrganizationProjectsModel } from '../../domain/mocks'
@@ -30,5 +30,14 @@ export class CheckProjectMemberRepositorySpy implements CheckProjectMember {
   async checkMember (params: CheckProjectMember.Params): Promise<boolean> {
     this.params = params
     return this.result
+  }
+}
+
+export class AddProjectMembersRepositorySpy implements AddProjectMembersRepository {
+  params: AddProjectMembersRepository.Params
+  result = true
+
+  async addMember (params: AddProjectMembersRepository.Params): Promise<void> {
+    this.params = params
   }
 }
