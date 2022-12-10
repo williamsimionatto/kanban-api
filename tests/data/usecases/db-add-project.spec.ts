@@ -1,8 +1,10 @@
-import { AddProject } from '../../../src/domain/usecases'
-
 import faker from 'faker'
+
+import { AddProject } from '../../../src/domain/usecases'
 import { DbAddProject } from '../../../src/data/usecases/'
-import { AddProjectRepository } from '../../../src/data/protocols/db/project'
+
+import { throwError } from '../../domain/mocks'
+import { AddProjectRepositorySpy } from '../mocks'
 
 const mockAddProjectParams = (): AddProject.Params => ({
   name: faker.name.firstName(),
@@ -13,42 +15,31 @@ const mockAddProjectParams = (): AddProject.Params => ({
   organizationId: faker.datatype.uuid()
 })
 
-const makeAddProjectRepositoryStub = (): AddProjectRepository => {
-  class AddProjectRepositoryStub implements AddProjectRepository {
-    async add (data: AddProject.Params): Promise<void> {
-      return new Promise(resolve => resolve())
-    }
-  }
-
-  return new AddProjectRepositoryStub()
-}
-
 type SutTypes = {
   sut: DbAddProject
-  addProjectRepositoryStub: AddProjectRepository
+  addProjectRepositorySpy: AddProjectRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const addProjectRepositoryStub = makeAddProjectRepositoryStub()
-  const sut = new DbAddProject(addProjectRepositoryStub)
+  const addProjectRepositorySpy = new AddProjectRepositorySpy()
+  const sut = new DbAddProject(addProjectRepositorySpy)
   return {
     sut,
-    addProjectRepositoryStub
+    addProjectRepositorySpy
   }
 }
 
 describe('DbAddProject UseCase', () => {
   test('Should call AddProjectRespository with correct values', async () => {
-    const { sut, addProjectRepositoryStub } = makeSut()
-    const addSpy = jest.spyOn(addProjectRepositoryStub, 'add')
+    const { sut, addProjectRepositorySpy } = makeSut()
     const projectParams = mockAddProjectParams()
     await sut.add(projectParams)
-    expect(addSpy).toHaveBeenCalledWith(projectParams)
+    expect(addProjectRepositorySpy.params).toEqual(projectParams)
   })
 
   test('Should throw if AddProjectRespository thorws', async () => {
-    const { sut, addProjectRepositoryStub } = makeSut()
-    jest.spyOn(addProjectRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    const { sut, addProjectRepositorySpy } = makeSut()
+    jest.spyOn(addProjectRepositorySpy, 'add').mockImplementationOnce(throwError)
     const projectParams = mockAddProjectParams()
     const account = sut.add(projectParams)
     await expect(account).rejects.toThrow()
