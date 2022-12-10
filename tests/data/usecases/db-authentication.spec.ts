@@ -91,7 +91,7 @@ describe('DbAuthentication Usecase', () => {
 
   test('Should return an data on success', async () => {
     const { sut, encrypterSpy } = makeSut()
-    const accessToken = await sut.auth(mockAuthenticationParams())
+    const { accessToken } = await sut.auth(mockAuthenticationParams())
     expect(accessToken).toBe(encrypterSpy.ciphertext)
   })
 
