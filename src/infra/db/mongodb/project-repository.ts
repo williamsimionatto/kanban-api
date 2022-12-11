@@ -1,12 +1,13 @@
 import { ObjectId } from 'mongodb'
-import { AddProjectMembersRepository, AddProjectRepository, CheckProjectByIdRepository, LoadProjectsByOrganizationRepository } from '../../../data/protocols/db/project'
+import { AddProjectMembersRepository, AddProjectRepository, CheckProjectByIdRepository, CheckProjectMemberRepository, LoadProjectsByOrganizationRepository } from '../../../data/protocols/db/project'
 import { MongoHelper } from './mongo-helper'
 
 export class ProjectMongoRepository implements
   AddProjectRepository,
   AddProjectMembersRepository,
   CheckProjectByIdRepository,
-  LoadProjectsByOrganizationRepository {
+  LoadProjectsByOrganizationRepository,
+  CheckProjectMemberRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const { organizationId, ...projectdataData } = data
@@ -40,5 +41,16 @@ export class ProjectMongoRepository implements
       .find({ organizationId: new ObjectId(organizationId) })
       .toArray()
     return MongoHelper.mapCollection(projects)
+  }
+
+  async checkMember (data: CheckProjectMemberRepository.Params): Promise<CheckProjectMemberRepository.Result> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    const project = await projectCollection.findOne(
+      {
+        _id: new ObjectId(data.projectId),
+        members: { $in: [new ObjectId(data.memberId)] }
+      }, { projection: { _id: 1 } })
+
+    return project !== null
   }
 }

@@ -1,5 +1,5 @@
-import { AddProjectMembers } from '../../domain/usecases'
-import { CheckProjectById } from '../../domain/usecases/check-project-by-id'
+import { AddProjectMembers, CheckProjectMember, CheckProjectById } from '../../domain/usecases'
+
 import { InvalidParamError } from '../errors'
 import { badRequest, forbidden, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
@@ -8,23 +8,29 @@ export class AddProjectMemberController implements Controller {
   constructor (
     private readonly validation: Validation,
     private readonly addProjectMembers: AddProjectMembers,
-    private readonly checkProjectById: CheckProjectById
+    private readonly checkProjectById: CheckProjectById,
+    private readonly checkProjectMember: CheckProjectMember
   ) {}
 
   async handle (request: AddProjectMemberController.Request): Promise<HttpResponse> {
     try {
+      const { projectId, accountId } = request
       const error = this.validation.validate(request)
       if (error) {
         return badRequest(error)
       }
 
-      const projectExists = await this.checkProjectById.checkById(request.projectId)
+      const projectExists = await this.checkProjectById.checkById(projectId)
       if (!projectExists) {
         return forbidden(new InvalidParamError('projectId'))
       }
 
-      const { ...member } = request
-      await this.addProjectMembers.add(member)
+      const isMember = await this.checkProjectMember.checkMember({ projectId, memberId: accountId })
+      if (isMember) {
+        return forbidden(new InvalidParamError('memberId'))
+      }
+
+      await this.addProjectMembers.add({ projectId, accountId })
 
       return noContent()
     } catch (error) {

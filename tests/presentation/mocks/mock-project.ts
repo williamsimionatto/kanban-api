@@ -1,4 +1,4 @@
-import { AddProject, LoadProjectsByOrganization } from '../../../src/domain/usecases'
+import { AddProject, AddProjectMembers, CheckProjectMember, LoadProjectsByOrganization } from '../../../src/domain/usecases'
 import { CheckProjectById } from '../../../src/domain/usecases/check-project-by-id'
 import { mockOrganizationProjectsModel } from '../../domain/mocks'
 
@@ -27,5 +27,23 @@ export class AddProjectSpy implements AddProject {
 
   async add (project: AddProject.Params): Promise<void> {
     this.params = project
+  }
+}
+
+export class AddProjectMembersSpy implements AddProjectMembers {
+  params: AddProjectMembers.Params
+
+  async add (params: AddProjectMembers.Params): Promise<void> {
+    this.params = params
+  }
+}
+
+export class CheckProjectMemberSpy implements CheckProjectMember {
+  params: CheckProjectMember.Params
+  result = false
+
+  async checkMember (params: CheckProjectMember.Params): Promise<boolean> {
+    this.params = params
+    return this.result
   }
 }
