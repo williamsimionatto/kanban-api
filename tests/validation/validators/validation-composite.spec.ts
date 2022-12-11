@@ -1,51 +1,45 @@
 import { MissingParamError } from '../../../src/presentation/errors'
-import { Validation } from '../../../src/presentation/protocols'
 import { ValidationComposite } from '../../../src/validation/validators'
+import { ValidationSpy } from '../../presentation/mocks'
 
-const makeValidation = (): Validation => {
-  class ValidationStub implements Validation {
-    validate (input: any): Error {
-      return null
-    }
-  }
+import faker from 'faker'
 
-  return new ValidationStub()
-}
+const field = faker.random.word()
 
 type SutTypes = {
   sut: ValidationComposite
-  validationStubs: Validation[]
+  validationSpies: ValidationSpy[]
 }
 
 const makeSut = (): SutTypes => {
-  const validationStubs = [makeValidation(), makeValidation()]
+  const validationSpies = [new ValidationSpy(), new ValidationSpy()]
 
-  const sut = new ValidationComposite(validationStubs)
+  const sut = new ValidationComposite(validationSpies)
   return {
     sut,
-    validationStubs
+    validationSpies
   }
 }
 
 describe('Validation Composite', () => {
   test('Should return an error if any validation fails', () => {
-    const { sut, validationStubs } = makeSut()
-    jest.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(new MissingParamError('field'))
-    const error = sut.validate({ field: 'any_value' })
-    expect(error).toEqual(new MissingParamError('field'))
+    const { sut, validationSpies } = makeSut()
+    validationSpies[1].error = new MissingParamError(field)
+    const error = sut.validate({ [field]: faker.random.word() })
+    expect(error).toEqual(validationSpies[1].error)
   })
 
-  test('Should return the first error if more then on validation fails', () => {
-    const { sut, validationStubs } = makeSut()
-    jest.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(new Error())
-    jest.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(new MissingParamError('field'))
-    const error = sut.validate({ field: 'any_value' })
-    expect(error).toEqual(new Error())
+  test('Should return the first error if more then one validation fails', () => {
+    const { sut, validationSpies } = makeSut()
+    validationSpies[0].error = new Error()
+    validationSpies[1].error = new MissingParamError(field)
+    const error = sut.validate({ [field]: faker.random.word() })
+    expect(error).toEqual(validationSpies[0].error)
   })
 
   test('Should not return if validation succeeds', () => {
     const { sut } = makeSut()
-    const error = sut.validate({ field: 'any_value' })
+    const error = sut.validate({ [field]: faker.random.word() })
     expect(error).toBeFalsy()
   })
 })
