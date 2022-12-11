@@ -1,5 +1,5 @@
-import { InvalidParamError } from '../../src/presentation/errors'
-import { DateValidation } from '../../src/validation/validators/date-validation'
+import { InvalidParamError } from '../../../src/presentation/errors'
+import { DateValidation } from '../../../src/validation/validators/'
 
 import faker from 'faker'
 

@@ -1,5 +1,5 @@
-import { EnumError } from '../../src/presentation/errors'
-import { IncludesValidation } from '../../src/validation/validators/includes-validation'
+import { EnumError } from '../../../src/presentation/errors'
+import { IncludesValidation } from '../../../src/validation/validators'
 
 const makeSut = (): IncludesValidation => {
   return new IncludesValidation('field', ['valid_value1', 'valid_value2'])

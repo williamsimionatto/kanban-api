@@ -1,6 +1,10 @@
-import { CheckProjectByIdRepository } from '../../../src/data/protocols/db/project'
-import { CheckProjectMember } from '../../../src/domain/usecases'
-import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
+import {
+  AddProjectMembersRepository,
+  AddProjectRepository,
+  CheckProjectByIdRepository,
+  CheckProjectMemberRepository,
+  LoadProjectsByOrganizationRepository
+} from '../../../src/data/protocols/db/project'
 import { mockOrganizationProjectsModel } from '../../domain/mocks'
 
 export class CheckProjectByIdRepositorySpy implements CheckProjectByIdRepository {
@@ -13,22 +17,40 @@ export class CheckProjectByIdRepositorySpy implements CheckProjectByIdRepository
   }
 }
 
-export class LoadProjectsByOrganizationRepositorySpy implements LoadProjectsByOrganization {
+export class LoadProjectsByOrganizationRepositorySpy implements LoadProjectsByOrganizationRepository {
   organizationId: string
   result = mockOrganizationProjectsModel()
 
-  async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganization.Result[]> {
+  async loadByOrganization (organizationId: string): Promise<LoadProjectsByOrganizationRepository.Result[]> {
     this.organizationId = organizationId
     return this.result
   }
 }
 
-export class CheckProjectMemberRepositorySpy implements CheckProjectMember {
-  params: CheckProjectMember.Params
+export class CheckProjectMemberRepositorySpy implements CheckProjectMemberRepository {
+  params: CheckProjectMemberRepository.Params
   result = true
 
-  async checkMember (params: CheckProjectMember.Params): Promise<boolean> {
+  async checkMember (params: CheckProjectMemberRepository.Params): Promise<boolean> {
     this.params = params
     return this.result
+  }
+}
+
+export class AddProjectMembersRepositorySpy implements AddProjectMembersRepository {
+  params: AddProjectMembersRepository.Params
+  result = true
+
+  async addMember (params: AddProjectMembersRepository.Params): Promise<void> {
+    this.params = params
+  }
+}
+
+export class AddProjectRepositorySpy implements AddProjectRepository {
+  params: AddProjectRepository.Params
+  result = true
+
+  async add (params: AddProjectRepository.Params): Promise<void> {
+    this.params = params
   }
 }
