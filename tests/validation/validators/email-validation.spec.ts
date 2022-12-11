@@ -1,8 +1,8 @@
 import faker from 'faker'
 
-import { InvalidParamError } from '../../src/presentation/errors'
-import { EmailValidation } from '../../src/validation/validators'
-import { throwError } from '../domain/mocks'
+import { InvalidParamError } from '../../../src/presentation/errors'
+import { EmailValidation } from '../../../src/validation/validators'
+import { throwError } from '../../domain/mocks'
 import { EmailValidatorSpy } from './mocks'
 
 const field = faker.random.word()

@@ -1,4 +1,4 @@
-import { EmailValidator } from '../../../src/validation/protocols'
+import { EmailValidator } from '../../../../src/validation/protocols'
 
 export class EmailValidatorSpy implements EmailValidator {
   isEmailValid = true
