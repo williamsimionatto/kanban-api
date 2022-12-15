@@ -60,3 +60,21 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **404** se a API não existir
 * Retorna erro **400** se **organizationId** não for válido
 * Retorna erro **500** se ocorrer um erro no servidor
+
+## Feature: Listar Detalhes de um projeto
+```
+ Como um gestor de projetos
+ Quero poder listar os detalhes de um projeto e seus respectivos membros
+ Para que eu possa editar alguma informação
+```
+
+### ✅ Caso de Sucesso
+* Dado que eu recebo uma requisição **GET** para **/api/project/{projectdId}**
+* Verifica se o **projectId** existe
+* Retorna **200** com os dados do projeto e seus respectivos membros
+* Retorna **200** com os dados do projeto e um array vazio caso o projeto não tenha membros
+
+### ❌ Exceções
+* Retorna erro **404** se a API não existir
+* Retorna erro **400** se **projectId** não for válido
+* Retorna erro **500** se ocorrer um erro no servidor
