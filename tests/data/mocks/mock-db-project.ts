@@ -3,9 +3,10 @@ import {
   AddProjectRepository,
   CheckProjectByIdRepository,
   CheckProjectMemberRepository,
+  LoadProjectByIdRepository,
   LoadProjectsByOrganizationRepository
 } from '../../../src/data/protocols/db/project'
-import { mockOrganizationProjectsModel } from '../../domain/mocks'
+import { mockOrganizationProjectsModel, mockProjectModelWithMembers } from '../../domain/mocks'
 
 export class CheckProjectByIdRepositorySpy implements CheckProjectByIdRepository {
   id: string
@@ -52,5 +53,15 @@ export class AddProjectRepositorySpy implements AddProjectRepository {
 
   async add (params: AddProjectRepository.Params): Promise<void> {
     this.params = params
+  }
+}
+
+export class LoadProjectByIdRepositorySpy implements LoadProjectByIdRepository {
+  id: string
+  result = mockProjectModelWithMembers()
+
+  async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {
+    this.id = id
+    return this.result
   }
 }
