@@ -5,7 +5,7 @@ export class DbLoadProjectById implements LoadProjectById {
   constructor (private readonly loadProjectByIdRepository: LoadProjectByIdRepository) {}
 
   async loadById (id: string): Promise<LoadProjectById.Result> {
-    await this.loadProjectByIdRepository.loadById(id)
-    return null
+    const project = await this.loadProjectByIdRepository.loadById(id)
+    return project
   }
 }
