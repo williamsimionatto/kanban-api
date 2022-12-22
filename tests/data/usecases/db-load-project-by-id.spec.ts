@@ -55,4 +55,10 @@ describe('DbLoadProjectById Usecase', () => {
     const project = await sut.loadById(projectId)
     expect(project).toBeNull()
   })
+
+  test('Should return a project on success', async () => {
+    const { sut, loadProjectByIdRepositorySpy } = makeSut()
+    const project = await sut.loadById(projectId)
+    expect(project).toEqual(loadProjectByIdRepositorySpy.result)
+  })
 })
