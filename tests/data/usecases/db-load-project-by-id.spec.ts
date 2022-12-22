@@ -39,4 +39,13 @@ describe('DbLoadProjectById Usecase', () => {
     await sut.loadById(projectId)
     expect(loadProjectByIdRepositorySpy.id).toBe(projectId)
   })
+
+  test('Should throw if LoadProjectByIdRepository throws', async () => {
+    const { sut, loadProjectByIdRepositorySpy } = makeSut()
+    jest.spyOn(loadProjectByIdRepositorySpy, 'loadById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.loadById(projectId)
+    await expect(promise).rejects.toThrow()
+  })
 })
