@@ -2,6 +2,7 @@ import faker from 'faker'
 import FakeObjectId from 'bson-objectid'
 
 import { LoadProjectsByOrganization } from '../../../src/domain/usecases/load-projects-by-organization'
+import { ProjectModel } from '../../../src/domain/model'
 
 export const mockProjectModel = (): LoadProjectsByOrganization.Result => ({
   id: faker.datatype.uuid(),
@@ -16,3 +17,16 @@ export const mockOrganizationProjectsModel = (): LoadProjectsByOrganization.Resu
   mockProjectModel(),
   mockProjectModel()
 ])
+
+const project = mockProjectModel()
+
+export const mockProjectModelWithMembers = (): ProjectModel => (
+  Object.assign(project, {
+    members: [{
+      id: faker.datatype.uuid(),
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      organizationId: project.organizationId
+    }]
+  })
+)
