@@ -191,5 +191,23 @@ describe('ProjectMongoRepository', () => {
       const projectLoaded = await sut.loadById(new FakeObjectId().toHexString())
       expect(projectLoaded).toBeFalsy()
     })
+
+    test('Should return a project with empty members if there is no members', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId)
+        }
+      )
+
+      const projectLoaded = await sut.loadById(project.insertedId.toHexString())
+      console.log(projectLoaded)
+
+      expect(projectLoaded).toBeTruthy()
+      expect(projectLoaded.name).toBe(projectParams.name)
+      expect(projectLoaded.members.length).toBe(0)
+    })
   })
 })
