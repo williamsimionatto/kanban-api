@@ -4,9 +4,10 @@ import {
   AddProjectRepository,
   CheckProjectByIdRepository,
   CheckProjectMemberRepository,
-  LoadProjectsByOrganizationRepository
+  LoadProjectsByOrganizationRepository,
+  LoadProjectByIdRepository
 } from '../../../data/protocols/db/project'
-import { LoadProjectById } from '../../../domain/usecases/load-project-by-id'
+
 import { MongoHelper } from './mongo-helper'
 
 export class ProjectMongoRepository implements
@@ -15,7 +16,7 @@ export class ProjectMongoRepository implements
   CheckProjectByIdRepository,
   LoadProjectsByOrganizationRepository,
   CheckProjectMemberRepository,
-  LoadProjectById {
+  LoadProjectByIdRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const { organizationId, ...projectdataData } = data
@@ -62,7 +63,7 @@ export class ProjectMongoRepository implements
     return project !== null
   }
 
-  async loadById (id: string): Promise<LoadProjectById.Result> {
+  async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const projectData = await projectCollection
       .aggregate([
