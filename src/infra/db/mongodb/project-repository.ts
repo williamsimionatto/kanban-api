@@ -94,8 +94,13 @@ export class ProjectMongoRepository implements
         }
       ]).toArray()
 
-    const project = MongoHelper.map(projectData[0])
+    const project = projectData.length
+      ? {
+          ...MongoHelper.map(projectData[0]),
+          members: MongoHelper.mapCollection(projectData[0].members)
+        }
+      : null
 
-    return { ...project, members: MongoHelper.mapCollection(project.members) }
+    return project
   }
 }
