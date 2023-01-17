@@ -1,5 +1,12 @@
 import { ObjectId } from 'mongodb'
-import { AddProjectMembersRepository, AddProjectRepository, CheckProjectByIdRepository, CheckProjectMemberRepository, LoadProjectsByOrganizationRepository } from '../../../data/protocols/db/project'
+import {
+  AddProjectMembersRepository,
+  AddProjectRepository,
+  CheckProjectByIdRepository,
+  CheckProjectMemberRepository,
+  LoadProjectsByOrganizationRepository
+} from '../../../data/protocols/db/project'
+import { LoadProjectById } from '../../../domain/usecases/load-project-by-id'
 import { MongoHelper } from './mongo-helper'
 
 export class ProjectMongoRepository implements
@@ -7,7 +14,8 @@ export class ProjectMongoRepository implements
   AddProjectMembersRepository,
   CheckProjectByIdRepository,
   LoadProjectsByOrganizationRepository,
-  CheckProjectMemberRepository {
+  CheckProjectMemberRepository,
+  LoadProjectById {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const { organizationId, ...projectdataData } = data
@@ -52,5 +60,42 @@ export class ProjectMongoRepository implements
       }, { projection: { _id: 1 } })
 
     return project !== null
+  }
+
+  async loadById (id: string): Promise<LoadProjectById.Result> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    const projectData = await projectCollection
+      .aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id)
+          }
+        },
+        {
+          $lookup: {
+            from: 'accounts',
+            localField: 'members',
+            foreignField: '_id',
+            as: 'members'
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            description: 1,
+            status: 1,
+            startDate: 1,
+            endDate: 1,
+            'members._id': 1,
+            'members.name': 1,
+            'members.email': 1
+          }
+        }
+      ]).toArray()
+
+    const project = MongoHelper.map(projectData[0])
+
+    return { ...project, members: MongoHelper.mapCollection(project.members) }
   }
 }
