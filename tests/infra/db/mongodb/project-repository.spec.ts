@@ -185,5 +185,11 @@ describe('ProjectMongoRepository', () => {
       expect(projectLoaded.name).toBe(projectParams.name)
       expect(projectLoaded.members.length).toBe(2)
     })
+
+    test('Should return null if project does not exist', async () => {
+      const sut = makeSut()
+      const projectLoaded = await sut.loadById(new FakeObjectId().toHexString())
+      expect(projectLoaded).toBeFalsy()
+    })
   })
 })
