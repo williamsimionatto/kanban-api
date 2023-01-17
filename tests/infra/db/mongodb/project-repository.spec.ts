@@ -162,4 +162,28 @@ describe('ProjectMongoRepository', () => {
       expect(exists).toBe(false)
     })
   })
+
+  describe('loadById()', () => {
+    test('Should load a project by id on success', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const account = await accounts.insertOne(makeAccountParams())
+      const anotherAccount = await accounts.insertOne(makeAccountParams())
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId),
+          members: [
+            new ObjectId(account.insertedId.toHexString()),
+            new ObjectId(anotherAccount.insertedId.toHexString())
+          ]
+        }
+      )
+
+      const projectLoaded = await sut.loadById(project.insertedId.toHexString())
+      expect(projectLoaded).toBeTruthy()
+      expect(projectLoaded.name).toBe(projectParams.name)
+      expect(projectLoaded.members.length).toBe(2)
+    })
+  })
 })
