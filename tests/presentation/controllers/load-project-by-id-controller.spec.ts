@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { LoadProjectByIdController } from '../../../src/presentation/controllers'
-import { noContent, ok } from '../../../src/presentation/helpers'
+import { noContent, ok, serverError } from '../../../src/presentation/helpers'
 
 import { LoadProjectByIdSpy } from '../mocks'
 
@@ -43,5 +43,12 @@ describe('LoadProjectByIdController', () => {
     loadProjectByIdSpy.result = null
     const httpResponse = await sut.handle(mockRequest())
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should return 500 if LoadProjectById throws', async () => {
+    const { sut, loadProjectByIdSpy } = makeSut()
+    jest.spyOn(loadProjectByIdSpy, 'loadById').mockImplementationOnce(() => { throw new Error() })
+    const httpResponse = await sut.handle(mockRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
