@@ -9,6 +9,7 @@ import {
 } from '../../../data/protocols/db/project'
 
 import { MongoHelper } from './mongo-helper'
+import { QueryBuilder } from './query-builder'
 
 export class ProjectMongoRepository implements
   AddProjectRepository,
@@ -65,36 +66,28 @@ export class ProjectMongoRepository implements
 
   async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {
     const projectCollection = await MongoHelper.getCollection('projects')
-    const projectData = await projectCollection
-      .aggregate([
-        {
-          $match: {
-            _id: new ObjectId(id)
-          }
-        },
-        {
-          $lookup: {
-            from: 'accounts',
-            localField: 'members',
-            foreignField: '_id',
-            as: 'members'
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            name: 1,
-            description: 1,
-            status: 1,
-            startDate: 1,
-            endDate: 1,
-            'members._id': 1,
-            'members.name': 1,
-            'members.email': 1
-          }
-        }
-      ]).toArray()
+    const query = new QueryBuilder()
+      .match({ _id: new ObjectId(id) })
+      .lookup({
+        from: 'accounts',
+        localField: 'members',
+        foreignField: '_id',
+        as: 'members'
+      })
+      .project({
+        _id: 1,
+        name: 1,
+        description: 1,
+        status: 1,
+        startDate: 1,
+        endDate: 1,
+        'members._id': 1,
+        'members.name': 1,
+        'members.email': 1
+      })
+      .build()
 
+    const projectData = await projectCollection.aggregate(query).toArray()
     const project = projectData.length
       ? {
           ...MongoHelper.map(projectData[0]),
