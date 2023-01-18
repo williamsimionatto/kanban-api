@@ -203,7 +203,6 @@ describe('ProjectMongoRepository', () => {
       )
 
       const projectLoaded = await sut.loadById(project.insertedId.toHexString())
-      console.log(projectLoaded)
 
       expect(projectLoaded).toBeTruthy()
       expect(projectLoaded.name).toBe(projectParams.name)
