@@ -1,13 +1,23 @@
 import { ObjectId } from 'mongodb'
-import { AddProjectMembersRepository, AddProjectRepository, CheckProjectByIdRepository, CheckProjectMemberRepository, LoadProjectsByOrganizationRepository } from '../../../data/protocols/db/project'
+import {
+  AddProjectMembersRepository,
+  AddProjectRepository,
+  CheckProjectByIdRepository,
+  CheckProjectMemberRepository,
+  LoadProjectsByOrganizationRepository,
+  LoadProjectByIdRepository
+} from '../../../data/protocols/db/project'
+
 import { MongoHelper } from './mongo-helper'
+import { QueryBuilder } from './query-builder'
 
 export class ProjectMongoRepository implements
   AddProjectRepository,
   AddProjectMembersRepository,
   CheckProjectByIdRepository,
   LoadProjectsByOrganizationRepository,
-  CheckProjectMemberRepository {
+  CheckProjectMemberRepository,
+  LoadProjectByIdRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const { organizationId, ...projectdataData } = data
@@ -52,5 +62,39 @@ export class ProjectMongoRepository implements
       }, { projection: { _id: 1 } })
 
     return project !== null
+  }
+
+  async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    const query = new QueryBuilder()
+      .match({ _id: new ObjectId(id) })
+      .lookup({
+        from: 'accounts',
+        localField: 'members',
+        foreignField: '_id',
+        as: 'members'
+      })
+      .project({
+        _id: 1,
+        name: 1,
+        description: 1,
+        status: 1,
+        startDate: 1,
+        endDate: 1,
+        'members._id': 1,
+        'members.name': 1,
+        'members.email': 1
+      })
+      .build()
+
+    const projectData = await projectCollection.aggregate(query).toArray()
+    const project = projectData.length
+      ? {
+          ...MongoHelper.map(projectData[0]),
+          members: MongoHelper.mapCollection(projectData[0].members)
+        }
+      : null
+
+    return project
   }
 }
