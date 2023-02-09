@@ -5,7 +5,8 @@ import {
   CheckProjectByIdRepository,
   CheckProjectMemberRepository,
   LoadProjectsByOrganizationRepository,
-  LoadProjectByIdRepository
+  LoadProjectByIdRepository,
+  EditProjectRepository
 } from '../../../data/protocols/db/project'
 
 import { MongoHelper } from './mongo-helper'
@@ -17,7 +18,8 @@ export class ProjectMongoRepository implements
   CheckProjectByIdRepository,
   LoadProjectsByOrganizationRepository,
   CheckProjectMemberRepository,
-  LoadProjectByIdRepository {
+  LoadProjectByIdRepository,
+  EditProjectRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
     const { organizationId, ...projectdataData } = data
@@ -96,5 +98,18 @@ export class ProjectMongoRepository implements
       : null
 
     return project
+  }
+
+  async edit (data: EditProjectRepository.Params): Promise<void> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    const { id, ...projectData } = data
+
+    await projectCollection.updateOne({
+      _id: new ObjectId(id)
+    }, {
+      $set: {
+        ...projectData
+      }
+    })
   }
 }
