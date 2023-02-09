@@ -1,5 +1,5 @@
 export interface EditProject {
-  add: (data: EditProject.Params) => Promise<void>
+  edit: (data: EditProject.Params) => Promise<void>
 }
 
 export namespace EditProject {
