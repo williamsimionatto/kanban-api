@@ -3,6 +3,7 @@ import {
   AddProjectRepository,
   CheckProjectByIdRepository,
   CheckProjectMemberRepository,
+  EditProjectRepository,
   LoadProjectByIdRepository,
   LoadProjectsByOrganizationRepository
 } from '../../../src/data/protocols/db/project'
@@ -63,5 +64,14 @@ export class LoadProjectByIdRepositorySpy implements LoadProjectByIdRepository {
   async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {
     this.id = id
     return this.result
+  }
+}
+
+export class EditProjectRepositorySpy implements EditProjectRepository {
+  params: EditProjectRepository.Params
+  result = true
+
+  async edit (params: EditProjectRepository.Params): Promise<void> {
+    this.params = params
   }
 }
