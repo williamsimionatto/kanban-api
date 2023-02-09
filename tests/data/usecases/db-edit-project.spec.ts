@@ -1,6 +1,7 @@
 import faker from 'faker'
 import { DbEditProject } from '../../../src/data/usecases'
 import { EditProject } from '../../../src/domain/usecases'
+import { throwError } from '../../domain/mocks'
 import { EditProjectRepositorySpy } from '../mocks'
 
 const mockEditProjectParams = (): EditProject.Params => ({
@@ -33,5 +34,13 @@ describe('DbEditProject UseCase', () => {
     const projectParams = mockEditProjectParams()
     await sut.edit(projectParams)
     expect(editProjectRepositorySpy.params).toEqual(projectParams)
+  })
+
+  test('Should throw if EditProjectRepository throws', async () => {
+    const { sut, editProjectRepositorySpy } = makeSut()
+    jest.spyOn(editProjectRepositorySpy, 'edit').mockImplementationOnce(throwError)
+    const projectParams = mockEditProjectParams()
+    const account = sut.edit(projectParams)
+    await expect(account).rejects.toThrow()
   })
 })
