@@ -209,4 +209,32 @@ describe('ProjectMongoRepository', () => {
       expect(projectLoaded.members.length).toBe(0)
     })
   })
+
+  describe('edit()', () => {
+    test('Should edit a project on success', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId)
+        }
+      )
+
+      await sut.edit(
+        {
+          ...projectParams,
+          id: project.insertedId.toHexString(),
+          name: 'any_name',
+          description: 'any_description'
+        }
+      )
+
+      const projectEdited = await projects.findOne({ _id: project.insertedId })
+
+      expect(projectEdited).toBeTruthy()
+      expect(projectEdited.name).toBe('any_name')
+      expect(projectEdited.description).toBe('any_description')
+    })
+  })
 })
