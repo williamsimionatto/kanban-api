@@ -78,3 +78,24 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **404** se a API não existir
 * Retorna erro **400** se **projectId** não for válido
 * Retorna erro **500** se ocorrer um erro no servidor
+
+## Feature: Editar um projeto
+```
+ Como um gestor de projetos
+ Quero poder editar um projeto
+ Para que eu possa atualizar as informações do projeto
+```
+
+### ✅ Caso de Sucesso
+* Dado que eu recebo uma requisição **PUT** para **/api/project/{projectId}**
+* Valida os campos obrigatórios **projectId**, **name**, **description**, **startDate**, **status**, **organizationId**
+* Valida se o **projectId** existe
+* Valida se o **organizationId** existe
+* Atualiza os dados do projeto
+* Retorna **204** sem conteúdo
+
+### ❌ Exceções
+* Retorna erro **404** se a API não existir
+* Retorna erro **400** se **projectId**, **name**, **description**, **startDate**, **status**, **organizationId** não forem válidos
+* Retorna erro **400** se o **projectId** ou **organizationId** não existir
+* Retorna erro **500** se ocorrer um erro no servidor
