@@ -3,7 +3,7 @@ import MockDate from 'mockdate'
 
 import { EditProjectController } from '../../../src/presentation/controllers'
 import { badRequest } from '../../../src/presentation/helpers'
-import { ValidationSpy } from '../mocks'
+import { EditProjectSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): EditProjectController.Request => ({
   id: faker.datatype.uuid(),
@@ -17,14 +17,18 @@ const makeFakeRequest = (): EditProjectController.Request => ({
 type SutTypes = {
   sut: EditProjectController
   validationSpy: ValidationSpy
+  editProjectSpy: EditProjectSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
-  const sut = new EditProjectController(validationSpy)
+  const editProjectSpy = new EditProjectSpy()
+  const sut = new EditProjectController(validationSpy, editProjectSpy)
+
   return {
     sut,
-    validationSpy
+    validationSpy,
+    editProjectSpy
   }
 }
 
@@ -49,5 +53,12 @@ describe('EditProject Controller', () => {
     validationSpy.error = new Error()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should call EditProject with correct values', async () => {
+    const { sut, editProjectSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(editProjectSpy.params).toEqual({ ...request })
   })
 })
