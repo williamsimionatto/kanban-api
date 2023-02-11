@@ -3,7 +3,7 @@ import MockDate from 'mockdate'
 
 import { EditProjectController } from '../../../src/presentation/controllers'
 import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
-import { EditProjectSpy, ValidationSpy } from '../mocks'
+import { CheckProjectByIdSpy, EditProjectSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): EditProjectController.Request => ({
   id: faker.datatype.uuid(),
@@ -18,17 +18,20 @@ type SutTypes = {
   sut: EditProjectController
   validationSpy: ValidationSpy
   editProjectSpy: EditProjectSpy
+  checkProjectByIdSpy: CheckProjectByIdSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const editProjectSpy = new EditProjectSpy()
-  const sut = new EditProjectController(validationSpy, editProjectSpy)
+  const checkProjectByIdSpy = new CheckProjectByIdSpy()
+  const sut = new EditProjectController(validationSpy, editProjectSpy, checkProjectByIdSpy)
 
   return {
     sut,
     validationSpy,
-    editProjectSpy
+    editProjectSpy,
+    checkProjectByIdSpy
   }
 }
 
@@ -75,5 +78,12 @@ describe('EditProject Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(noContent())
+  })
+
+  test('Should call CheckProjectById with correct values', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(checkProjectByIdSpy.id).toEqual(request.id)
   })
 })
