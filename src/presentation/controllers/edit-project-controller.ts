@@ -1,9 +1,12 @@
+import { EditProject } from '../../domain/usecases'
+
 import { badRequest } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class EditProjectController implements Controller {
   constructor (
-    private readonly validation: Validation
+    private readonly validation: Validation,
+    private readonly editProject: EditProject
   ) {}
 
   async handle (request: EditProjectController.Request): Promise<HttpResponse> {
@@ -11,6 +14,12 @@ export class EditProjectController implements Controller {
     if (error) {
       return badRequest(error)
     }
+
+    await this.editProject.edit({
+      ...request,
+      startDate: new Date(request.startDate),
+      endDate: request.endDate ? new Date(request.endDate) : undefined
+    })
 
     return await new Promise(resolve => resolve(null))
   }
