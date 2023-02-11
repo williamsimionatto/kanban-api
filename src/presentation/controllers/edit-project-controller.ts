@@ -1,6 +1,7 @@
 import { CheckProjectById, EditProject } from '../../domain/usecases'
+import { InvalidParamError } from '../errors'
 
-import { badRequest, noContent, serverError } from '../helpers'
+import { badRequest, forbidden, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class EditProjectController implements Controller {
@@ -17,7 +18,10 @@ export class EditProjectController implements Controller {
         return badRequest(error)
       }
 
-      await this.checkProjectById.checkById(request.id)
+      const projectExists = await this.checkProjectById.checkById(request.id)
+      if (!projectExists) {
+        return forbidden(new InvalidParamError('id'))
+      }
 
       await this.editProject.edit({
         ...request,
