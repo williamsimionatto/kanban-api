@@ -2,6 +2,7 @@ import faker from 'faker'
 import MockDate from 'mockdate'
 
 import { EditProjectController } from '../../../src/presentation/controllers'
+import { badRequest } from '../../../src/presentation/helpers'
 import { ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): EditProjectController.Request => ({
@@ -41,5 +42,12 @@ describe('EditProject Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(validationSpy.input).toEqual(request)
+  })
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new Error()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
