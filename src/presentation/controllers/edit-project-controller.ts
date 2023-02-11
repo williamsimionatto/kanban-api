@@ -1,4 +1,4 @@
-import { EditProject } from '../../domain/usecases'
+import { CheckProjectById, EditProject } from '../../domain/usecases'
 
 import { badRequest, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
@@ -6,7 +6,8 @@ import { Controller, HttpResponse, Validation } from '../protocols'
 export class EditProjectController implements Controller {
   constructor (
     private readonly validation: Validation,
-    private readonly editProject: EditProject
+    private readonly editProject: EditProject,
+    private readonly checkProjectById: CheckProjectById
   ) {}
 
   async handle (request: EditProjectController.Request): Promise<HttpResponse> {
@@ -15,6 +16,8 @@ export class EditProjectController implements Controller {
       if (error) {
         return badRequest(error)
       }
+
+      await this.checkProjectById.checkById(request.id)
 
       await this.editProject.edit({
         ...request,
