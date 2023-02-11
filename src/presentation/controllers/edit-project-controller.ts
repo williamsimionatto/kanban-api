@@ -1,6 +1,6 @@
 import { EditProject } from '../../domain/usecases'
 
-import { badRequest, serverError } from '../helpers'
+import { badRequest, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class EditProjectController implements Controller {
@@ -22,7 +22,7 @@ export class EditProjectController implements Controller {
         endDate: request.endDate ? new Date(request.endDate) : undefined
       })
 
-      return await new Promise(resolve => resolve(null))
+      return noContent()
     } catch (error) {
       return serverError(error)
     }
