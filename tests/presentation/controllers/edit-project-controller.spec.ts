@@ -2,7 +2,7 @@ import faker from 'faker'
 import MockDate from 'mockdate'
 
 import { EditProjectController } from '../../../src/presentation/controllers'
-import { badRequest } from '../../../src/presentation/helpers'
+import { badRequest, serverError } from '../../../src/presentation/helpers'
 import { EditProjectSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): EditProjectController.Request => ({
@@ -60,5 +60,14 @@ describe('EditProject Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(editProjectSpy.params).toEqual({ ...request })
+  })
+
+  test('Should return 500 if EditProject throws', async () => {
+    const { sut, editProjectSpy } = makeSut()
+    jest.spyOn(editProjectSpy, 'edit').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
