@@ -2,7 +2,8 @@ import faker from 'faker'
 import MockDate from 'mockdate'
 
 import { EditProjectController } from '../../../src/presentation/controllers'
-import { badRequest, noContent, serverError } from '../../../src/presentation/helpers'
+import { InvalidParamError } from '../../../src/presentation/errors'
+import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
 import { CheckProjectByIdSpy, EditProjectSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): EditProjectController.Request => ({
@@ -85,5 +86,12 @@ describe('EditProject Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(checkProjectByIdSpy.id).toEqual(request.id)
+  })
+
+  test('Should return 403 if CheckProjectById returns false', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    checkProjectByIdSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('id')))
   })
 })
