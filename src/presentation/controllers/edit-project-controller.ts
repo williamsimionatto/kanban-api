@@ -1,6 +1,6 @@
 import { EditProject } from '../../domain/usecases'
 
-import { badRequest } from '../helpers'
+import { badRequest, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class EditProjectController implements Controller {
@@ -10,18 +10,22 @@ export class EditProjectController implements Controller {
   ) {}
 
   async handle (request: EditProjectController.Request): Promise<HttpResponse> {
-    const error = this.validation.validate(request)
-    if (error) {
-      return badRequest(error)
+    try {
+      const error = this.validation.validate(request)
+      if (error) {
+        return badRequest(error)
+      }
+
+      await this.editProject.edit({
+        ...request,
+        startDate: new Date(request.startDate),
+        endDate: request.endDate ? new Date(request.endDate) : undefined
+      })
+
+      return await new Promise(resolve => resolve(null))
+    } catch (error) {
+      return serverError(error)
     }
-
-    await this.editProject.edit({
-      ...request,
-      startDate: new Date(request.startDate),
-      endDate: request.endDate ? new Date(request.endDate) : undefined
-    })
-
-    return await new Promise(resolve => resolve(null))
   }
 }
 
