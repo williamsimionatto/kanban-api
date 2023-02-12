@@ -24,7 +24,10 @@ export class EditProjectController implements Controller {
         return forbidden(new InvalidParamError('id'))
       }
 
-      await this.checkOrganizationById.checkById(request.organizationId)
+      const organizationExists = await this.checkOrganizationById.checkById(request.organizationId)
+      if (!organizationExists) {
+        return forbidden(new InvalidParamError('organizationId'))
+      }
 
       await this.editProject.edit({
         ...request,
