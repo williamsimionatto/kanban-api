@@ -40,4 +40,15 @@ describe('ProjectMemberStatus Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
   })
+
+  test('Should call ActivateProjectMember with correct values when active is true', async () => {
+    const { sut, activateProjectMemberSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.active = true
+    await sut.handle(request)
+    expect(activateProjectMemberSpy.params).toEqual({
+      accountId: request.accountId,
+      projectId: request.projectId
+    })
+  })
 })
