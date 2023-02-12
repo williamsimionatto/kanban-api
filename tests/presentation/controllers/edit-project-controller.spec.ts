@@ -12,6 +12,7 @@ const makeFakeRequest = (): EditProjectController.Request => ({
   description: faker.commerce.productDescription(),
   status: faker.random.arrayElement(['active', 'inactive', 'done']),
   startDate: faker.date.recent(),
+  endDate: faker.date.future(),
   organizationId: faker.datatype.uuid()
 })
 
@@ -70,6 +71,14 @@ describe('EditProject Controller', () => {
   test('Should call EditProject with correct values', async () => {
     const { sut, editProjectSpy } = makeSut()
     const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(editProjectSpy.params).toEqual({ ...request })
+  })
+
+  test('Should call EditProject with  endDate undefined', async () => {
+    const { sut, editProjectSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.endDate = undefined
     await sut.handle(request)
     expect(editProjectSpy.params).toEqual({ ...request })
   })
