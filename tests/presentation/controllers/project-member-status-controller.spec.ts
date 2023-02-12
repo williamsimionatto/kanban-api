@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { ProjectMemberStatusController } from '../../../src/presentation/controllers'
-import { badRequest } from '../../../src/presentation/helpers'
+import { badRequest, ok } from '../../../src/presentation/helpers'
 import { ActivateProjectMemberSpy, InactivateProjectMemberSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): ProjectMemberStatusController.Request => ({
@@ -65,5 +65,15 @@ describe('ProjectMemberStatus Controller', () => {
       accountId: request.accountId,
       projectId: request.projectId
     })
+  })
+
+  test('Should return 200 on success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(
+      ok({
+        message: 'Project member status updated successfully'
+      })
+    )
   })
 })
