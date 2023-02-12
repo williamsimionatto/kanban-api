@@ -169,4 +169,73 @@ describe('Project Routes', () => {
         .expect(204)
     })
   })
+
+  describe('PUT /project/:id', () => {
+    let project: any
+    let organization: any
+
+    beforeEach(async () => {
+      const organizationData = {
+        name: 'organization name',
+        description: 'organization description'
+      }
+
+      organization = await organizationCollection.insertOne(organizationData)
+
+      project = await projectCollection.insertOne({
+        name: 'any_name',
+        description: 'any_description',
+        status: 'active',
+        startDate: '2021-01-01',
+        endDate: '2021-12-31',
+        organizationId: organization.insertedId.toHexString()
+      })
+    })
+
+    test('Should return 403 on edit project without accesstoken', async () => {
+      await request(app)
+        .put(`/api/project/${project.insertedId.toHexString()}`)
+        .send({
+          name: 'any_name',
+          description: 'any_description',
+          status: 'active',
+          startDate: '2021-01-01',
+          endDate: '2021-01-01',
+          organizationId: organization.insertedId.toHexString()
+        })
+        .expect(403)
+    })
+
+    test('Should return 204 on edit survey with valid accessToken', async () => {
+      const accessToken = await mockAccessToken()
+      await request(app)
+        .put(`/api/project/${project.insertedId.toHexString()}`)
+        .set('x-access-token', accessToken)
+        .send({
+          name: 'any_name',
+          description: 'any_description',
+          status: 'active',
+          startDate: '2021-01-01',
+          endDate: '2021-12-31',
+          organizationId: organization.insertedId.toHexString()
+        })
+        .expect(204)
+    })
+
+    test('Should 204 on edit project with null end date', async () => {
+      const accessToken = await mockAccessToken()
+      await request(app)
+        .put(`/api/project/${project.insertedId.toHexString()}`)
+        .set('x-access-token', accessToken)
+        .send({
+          name: 'any_name',
+          description: 'any_description',
+          status: 'active',
+          startDate: '2021-01-01',
+          endDate: null,
+          organizationId: organization.insertedId.toHexString()
+        })
+        .expect(204)
+    })
+  })
 })
