@@ -19,20 +19,25 @@ export class EditProjectController implements Controller {
         return badRequest(error)
       }
 
-      const projectExists = await this.checkProjectById.checkById(request.id)
+      const { id, name, description, status, startDate, endDate, organizationId } = request
+      const projectExists = await this.checkProjectById.checkById(id)
       if (!projectExists) {
         return forbidden(new InvalidParamError('id'))
       }
 
-      const organizationExists = await this.checkOrganizationById.checkById(request.organizationId)
+      const organizationExists = await this.checkOrganizationById.checkById(organizationId)
       if (!organizationExists) {
         return forbidden(new InvalidParamError('organizationId'))
       }
 
       await this.editProject.edit({
-        ...request,
-        startDate: new Date(request.startDate),
-        endDate: request.endDate ? new Date(request.endDate) : undefined
+        id,
+        name,
+        description,
+        status,
+        startDate: new Date(startDate),
+        endDate: endDate ? new Date(endDate) : undefined,
+        organizationId
       })
 
       return noContent()
