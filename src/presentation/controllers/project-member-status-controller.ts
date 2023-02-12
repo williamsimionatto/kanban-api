@@ -15,6 +15,11 @@ export class ProjectMemberStatusController implements Controller {
       return badRequest(error)
     }
 
+    const { projectId, accountId, active } = request
+    if (active) {
+      await this.activateProjectMember.activate({ projectId, accountId })
+    }
+
     return await new Promise(resolve => resolve(null))
   }
 }
