@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { makeAddProjectController, makeEditProjectController, makeLoadProjectByIdController } from '../factories/controllers/project'
-import { makeAddProjectMembersController } from '../factories/controllers/project-member'
+import { makeAddProjectMembersController, makeStatusProjectMemberController } from '../factories/controllers/project-member'
 
 import { adaptRoute } from '../adapters'
 import { auth } from '../middlewares'
@@ -13,4 +13,5 @@ export default (router: Router): void => {
   router.post('/project/:projectId/member', auth, adaptRoute(makeAddProjectMembersController()))
 
   router.put('/project/:id', auth, adaptRoute(makeEditProjectController()))
+  router.put('/project/:projectId/member/:accountId/activate', auth, adaptRoute(makeStatusProjectMemberController()))
 }
