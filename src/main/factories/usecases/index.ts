@@ -10,3 +10,6 @@ export * from './load-projects-by-organization-factory'
 export * from './check-organization-by-id-factory'
 export * from './check-project-member-factory'
 export * from './load-project-by-id-factory'
+
+export * from './db-activate-project-member-factory'
+export * from './db-inactivate-project-member-factory'
