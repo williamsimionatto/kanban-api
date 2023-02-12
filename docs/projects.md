@@ -1,4 +1,4 @@
-## Feature: Cadastro de projetos
+## Feature: Cadastro de projetos ✅
 
 ```
 Como um gestor de projetos
@@ -19,7 +19,7 @@ Para que eu possa acompanhar e gerenciar o andamento dos projetos
 * Retorna erro **400** se **name**, **description**, **startDate**, **status**, **organizationId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Adicionar membros a um projeto
+## Feature: Adicionar membros a um projeto ✅
 
 ```
 Como um gestor de projetos
@@ -41,7 +41,7 @@ Para que o membro possa atuar no projeto
 * Retorna erro **400** se **projectId**, **memberId** não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Listar projetos de uma organização
+## Feature: Listar projetos de uma organização ✅
 
 ```
 Como um gestor de projetos
@@ -61,7 +61,7 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **400** se **organizationId** não for válido
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Listar Detalhes de um projeto
+## Feature: Listar Detalhes de um projeto ✅
 ```
  Como um gestor de projetos
  Quero poder listar os detalhes de um projeto e seus respectivos membros
@@ -79,7 +79,7 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **400** se **projectId** não for válido
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Editar um projeto
+## Feature: Editar um projeto ✅
 ```
  Como um gestor de projetos
  Quero poder editar um projeto
@@ -100,7 +100,7 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **400** se o **projectId** ou **organizationId** não existir
 * Retorna erro **500** se ocorrer um erro no servidor
 
-## Feature: Ativar/Inativar um membro de um projeto
+## Feature: Ativar/Inativar um membro de um projeto ✅
 ```
 Como um gestor de projetos
 Quero poder ativar/inativar um membro de um projeto
@@ -116,3 +116,25 @@ Para que ele visualize ou não as informações do projeto
 * Retorna erro **404** se a API não existir
 * Retorna erro **400** se **projectId**, **accountId** e **active** estão informados  não forem válidos
 * Retorna erro **500** se ocorrer um erro no servidor
+
+## Feature: Cadastrar as fases de um projeto 🔄
+```
+Como um gestor de projetos
+Quero poder cadastrar as fases de um projeto
+Para que eu possa acompanhar o andamento do projeto
+```
+
+### ✅ Caso de Sucesso
+* Dado que eu recebo uma requisição **POST** para **/api/project/{projectId}/phases**
+* Valida os campos obrigatórios **projectId**, **name**, **description**, **order**, **type**
+* Valida se o **projectId** existe
+* Valida se o **type** é válido, dentre os tipos **BACKLOG**, **TODO**, **DOING**, **BLOCKED**,**REVIEW**, **DONE**
+* Cria a fase do projeto
+* Retorna **204** sem conteúdo
+
+### ❌ Exceções
+* Retorna erro **404** se a API não existir
+* Retorna erro **400** se **projectId**, **name**, **description**, **order** não forem válidos
+* Retorna erro **500** se ocorrer um erro no servidor
+
+
