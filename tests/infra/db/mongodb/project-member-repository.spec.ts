@@ -144,4 +144,34 @@ describe('ProjectMemberMongoRepository', () => {
       expect(member.active).toBe(true)
     })
   })
+
+  describe('inactivate()', () => {
+    test('Should inactivate a member on project with success', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const account = await accounts.insertOne(makeAccountParams())
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId),
+          members: [
+            {
+              id: new ObjectId(account.insertedId.toHexString()),
+              active: true
+            }
+          ]
+        }
+      )
+
+      await sut.inactivate(
+        {
+          projectId: project.insertedId.toHexString(),
+          accountId: account.insertedId.toHexString()
+        }
+      )
+      const projectLoaded = await projects.findOne({ name: projectParams.name })
+      const member = projectLoaded.members.find((member: any) => member.id.toHexString() === account.insertedId.toHexString())
+      expect(member.active).toBe(false)
+    })
+  })
 })
