@@ -31,4 +31,11 @@ describe('DbActivateProjectMember Usecase', () => {
     await sut.activate(params)
     expect(activateSpy).toHaveBeenCalledWith(params)
   })
+
+  test('Should throw if ActivateProjectMemberRepository throws', async () => {
+    const { sut, activateProjectMemberRepositorySpy } = makeSut()
+    jest.spyOn(activateProjectMemberRepositorySpy, 'activate').mockRejectedValueOnce(new Error())
+    const promise = sut.activate(makeFakeData())
+    await expect(promise).rejects.toThrow()
+  })
 })
