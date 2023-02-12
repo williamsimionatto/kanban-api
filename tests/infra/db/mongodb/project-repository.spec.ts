@@ -113,7 +113,7 @@ describe('ProjectMongoRepository', () => {
             },
             {
               id: new ObjectId(anotherAccount.insertedId.toHexString()),
-              active: true
+              active: false
             }
           ]
         }
@@ -123,6 +123,8 @@ describe('ProjectMongoRepository', () => {
       expect(projectLoaded).toBeTruthy()
       expect(projectLoaded.name).toBe(projectParams.name)
       expect(projectLoaded.members.length).toBe(2)
+      expect(projectLoaded.members[0].active).toBe(true)
+      expect(projectLoaded.members[1].active).toBe(false)
     })
 
     test('Should return null if project does not exist', async () => {

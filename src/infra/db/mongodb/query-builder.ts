@@ -20,6 +20,10 @@ export class QueryBuilder {
     return this.addStep('$project', data)
   }
 
+  addFields (data: object): QueryBuilder {
+    return this.addStep('$addFields', data)
+  }
+
   build (): object[] {
     return this.query
   }

@@ -47,7 +47,40 @@ export class ProjectMongoRepository implements
         from: 'accounts',
         localField: 'members.id',
         foreignField: '_id',
-        as: 'members'
+        as: 'project_members'
+      })
+      .addFields({
+        members: {
+          $map: {
+            input: '$members',
+            as: 'member',
+            in: {
+              $mergeObjects: [
+                '$$member',
+                {
+                  $arrayElemAt: [
+                    {
+                      $filter: {
+                        input: '$project_members',
+                        as: 'project_member',
+                        cond: {
+                          $eq: [
+                            '$$member.id',
+                            '$$project_member._id'
+                          ]
+                        }
+                      }
+                    },
+                    0
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      })
+      .project({
+        project_members: 0
       })
       .project({
         _id: 1,
@@ -58,7 +91,8 @@ export class ProjectMongoRepository implements
         endDate: 1,
         'members._id': 1,
         'members.name': 1,
-        'members.email': 1
+        'members.email': 1,
+        'members.active': 1
       })
       .build()
 
@@ -66,7 +100,7 @@ export class ProjectMongoRepository implements
     const project = projectData.length
       ? {
           ...MongoHelper.map(projectData[0]),
-          members: MongoHelper.mapCollection(projectData[0].members)
+          members: projectData[0].members?.length ? MongoHelper.mapCollection(projectData[0].members) : []
         }
       : null
 

@@ -13,4 +13,5 @@ type Member = {
   name: string
   email: string
   organizationId: string
+  active: boolean
 }
