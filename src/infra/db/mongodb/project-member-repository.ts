@@ -3,7 +3,8 @@ import { ObjectId } from 'mongodb'
 import {
   ActivateProjectMemberRepository,
   AddProjectMemberRepository,
-  CheckProjectMemberRepository
+  CheckProjectMemberRepository,
+  InactivateProjectMemberRepository
 } from '../../../data/protocols/db/project'
 import { ActivateProjectMember } from '../../../domain/usecases'
 
@@ -12,7 +13,8 @@ import { MongoHelper } from './mongo-helper'
 export class ProjectMemberMongoRepository implements
   AddProjectMemberRepository,
   CheckProjectMemberRepository,
-  ActivateProjectMemberRepository {
+  ActivateProjectMemberRepository,
+  InactivateProjectMemberRepository {
   async addMember (data: AddProjectMemberRepository.Params): Promise<void> {
     const organizationCollection = await MongoHelper.getCollection('projects')
 
@@ -50,6 +52,18 @@ export class ProjectMemberMongoRepository implements
     }, {
       $set: {
         'members.$.active': true
+      }
+    })
+  }
+
+  async inactivate (params: ActivateProjectMember.Params): Promise<void> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    await projectCollection.updateOne({
+      _id: new ObjectId(params.projectId),
+      'members.id': new ObjectId(params.accountId)
+    }, {
+      $set: {
+        'members.$.active': false
       }
     })
   }
