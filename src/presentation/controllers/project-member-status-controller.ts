@@ -1,4 +1,5 @@
 import { ActivateProjectMember } from '../../domain/usecases'
+import { badRequest } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class ProjectMemberStatusController implements Controller {
@@ -8,7 +9,12 @@ export class ProjectMemberStatusController implements Controller {
   ) {}
 
   async handle (request: ProjectMemberStatusController.Request): Promise<HttpResponse> {
-    this.validation.validate(request)
+    const error = this.validation.validate(request)
+
+    if (error) {
+      return badRequest(error)
+    }
+
     return await new Promise(resolve => resolve(null))
   }
 }
