@@ -1,4 +1,4 @@
-import { CheckProjectById, EditProject } from '../../domain/usecases'
+import { CheckOrganizationById, CheckProjectById, EditProject } from '../../domain/usecases'
 import { InvalidParamError } from '../errors'
 
 import { badRequest, forbidden, noContent, serverError } from '../helpers'
@@ -8,7 +8,8 @@ export class EditProjectController implements Controller {
   constructor (
     private readonly validation: Validation,
     private readonly editProject: EditProject,
-    private readonly checkProjectById: CheckProjectById
+    private readonly checkProjectById: CheckProjectById,
+    private readonly checkOrganizationById: CheckOrganizationById
   ) {}
 
   async handle (request: EditProjectController.Request): Promise<HttpResponse> {
@@ -22,6 +23,8 @@ export class EditProjectController implements Controller {
       if (!projectExists) {
         return forbidden(new InvalidParamError('id'))
       }
+
+      await this.checkOrganizationById.checkById(request.organizationId)
 
       await this.editProject.edit({
         ...request,
