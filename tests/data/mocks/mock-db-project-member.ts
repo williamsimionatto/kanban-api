@@ -1,4 +1,13 @@
-import { ActivateProjectMemberRepository, InactivateProjectMemberRepository } from '../../../src/data/protocols/db/project'
+import { ActivateProjectMemberRepository, InactivateProjectMemberRepository, AddProjectMemberRepository } from '../../../src/data/protocols/db/project'
+
+export class AddProjectMembersRepositorySpy implements AddProjectMemberRepository {
+  params: AddProjectMemberRepository.Params
+  result = true
+
+  async addMember (params: AddProjectMemberRepository.Params): Promise<void> {
+    this.params = params
+  }
+}
 
 export class ActivateProjectMemberRepositorySpy implements ActivateProjectMemberRepository {
   params: ActivateProjectMemberRepository.Params

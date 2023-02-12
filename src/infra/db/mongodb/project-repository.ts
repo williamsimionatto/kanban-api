@@ -1,9 +1,7 @@
 import { ObjectId } from 'mongodb'
 import {
-  AddProjectMembersRepository,
   AddProjectRepository,
   CheckProjectByIdRepository,
-  CheckProjectMemberRepository,
   LoadProjectsByOrganizationRepository,
   LoadProjectByIdRepository,
   EditProjectRepository
@@ -14,10 +12,8 @@ import { QueryBuilder } from './query-builder'
 
 export class ProjectMongoRepository implements
   AddProjectRepository,
-  AddProjectMembersRepository,
   CheckProjectByIdRepository,
   LoadProjectsByOrganizationRepository,
-  CheckProjectMemberRepository,
   LoadProjectByIdRepository,
   EditProjectRepository {
   async add (data: AddProjectRepository.Params): Promise<void> {
@@ -26,18 +22,6 @@ export class ProjectMongoRepository implements
     await projectCollection.insertOne({
       ...projectdataData,
       organizationId: new ObjectId(organizationId)
-    })
-  }
-
-  async addMember (data: AddProjectMembersRepository.Params): Promise<void> {
-    const organizationCollection = await MongoHelper.getCollection('projects')
-
-    await organizationCollection.updateOne({
-      _id: new ObjectId(data.projectId)
-    }, {
-      $addToSet: {
-        members: new ObjectId(data.accountId)
-      }
     })
   }
 
@@ -53,17 +37,6 @@ export class ProjectMongoRepository implements
       .find({ organizationId: new ObjectId(organizationId) })
       .toArray()
     return MongoHelper.mapCollection(projects)
-  }
-
-  async checkMember (data: CheckProjectMemberRepository.Params): Promise<CheckProjectMemberRepository.Result> {
-    const projectCollection = await MongoHelper.getCollection('projects')
-    const project = await projectCollection.findOne(
-      {
-        _id: new ObjectId(data.projectId),
-        members: { $in: [new ObjectId(data.memberId)] }
-      }, { projection: { _id: 1 } })
-
-    return project !== null
   }
 
   async loadById (id: string): Promise<LoadProjectByIdRepository.Result> {

@@ -58,27 +58,6 @@ describe('ProjectMongoRepository', () => {
     })
   })
 
-  describe('addMember()', () => {
-    test('Should add a member on addMember success', async () => {
-      const sut = makeSut()
-      const projectParams = makeProjectParams()
-      await projects.insertOne(projectParams)
-
-      const organization = await projects.findOne({ name: projectParams.name })
-
-      const account = makeAccountParams()
-      await accounts.insertOne(account)
-      const member = await accounts.findOne({ email: account.email })
-
-      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString(), active: true })
-      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString(), active: true })
-      const projectWithMembers = await projects.findOne({ name: projectParams.name })
-
-      expect(projectWithMembers.members.length).toBe(1)
-      expect(projectWithMembers.members).toEqual([member._id])
-    })
-  })
-
   describe('checkById()', () => {
     test('Should return true if project exists', async () => {
       const sut = makeSut()
@@ -114,52 +93,6 @@ describe('ProjectMongoRepository', () => {
       const sut = makeSut()
       const projectsList = await sut.loadByOrganization(new FakeObjectId().toHexString())
       expect(projectsList.length).toBe(0)
-    })
-  })
-
-  describe('checkMember()', () => {
-    test('Should return true if member exists', async () => {
-      const sut = makeSut()
-      const projectParams = makeProjectParams()
-      const account = await accounts.insertOne(makeAccountParams())
-      const project = await projects.insertOne(
-        {
-          ...projectParams,
-          organizationId: new ObjectId(projectParams.organizationId),
-          members: [
-            new ObjectId(account.insertedId.toHexString())
-          ]
-        }
-      )
-
-      const exists = await sut.checkMember({
-        projectId: project.insertedId.toHexString(),
-        memberId: account.insertedId.toHexString()
-      })
-
-      expect(exists).toBe(true)
-    })
-
-    test('Should return false if member does not exist', async () => {
-      const sut = makeSut()
-      const projectParams = makeProjectParams()
-      const account = await accounts.insertOne(makeAccountParams())
-      const project = await projects.insertOne(
-        {
-          ...projectParams,
-          organizationId: new ObjectId(projectParams.organizationId),
-          members: [
-            new FakeObjectId().toHexString()
-          ]
-        }
-      )
-
-      const exists = await sut.checkMember({
-        projectId: project.insertedId.toHexString(),
-        memberId: account.insertedId.toHexString()
-      })
-
-      expect(exists).toBe(false)
     })
   })
 

@@ -1,5 +1,4 @@
 import {
-  AddProjectMembersRepository,
   AddProjectRepository,
   CheckProjectByIdRepository,
   CheckProjectMemberRepository,
@@ -36,15 +35,6 @@ export class CheckProjectMemberRepositorySpy implements CheckProjectMemberReposi
   async checkMember (params: CheckProjectMemberRepository.Params): Promise<boolean> {
     this.params = params
     return this.result
-  }
-}
-
-export class AddProjectMembersRepositorySpy implements AddProjectMembersRepository {
-  params: AddProjectMembersRepository.Params
-  result = true
-
-  async addMember (params: AddProjectMembersRepository.Params): Promise<void> {
-    this.params = params
   }
 }
 
