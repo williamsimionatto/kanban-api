@@ -99,3 +99,20 @@ Para que eu possa ver os projetos que estão sendo executados
 * Retorna erro **400** se **projectId**, **name**, **description**, **startDate**, **status**, **organizationId** não forem válidos
 * Retorna erro **400** se o **projectId** ou **organizationId** não existir
 * Retorna erro **500** se ocorrer um erro no servidor
+
+## Feature: Ativar/Inativar um membro de um projeto
+```
+Como um gestor de projetos
+Quero poder ativar/inativar um membro de um projeto
+Para que ele visualize ou não as informações do projeto
+```
+### ✅ Caso de Sucesso
+* Dado que eu recebo uma requisição **PUT** para **/api/project/{projectId}/member/{memberId}**
+* Valida os campos obrigatórios **projectId**, **accountId** e **active** estão informados
+* Atualiza os dados do membro do projeto projeto
+* Retorna **204** sem conteúdo
+
+### ❌ Exceções
+* Retorna erro **404** se a API não existir
+* Retorna erro **400** se **projectId**, **accountId** e **active** estão informados  não forem válidos
+* Retorna erro **500** se ocorrer um erro no servidor
