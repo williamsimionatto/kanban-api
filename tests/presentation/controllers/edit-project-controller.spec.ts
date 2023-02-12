@@ -118,4 +118,11 @@ describe('EditProject Controller', () => {
     await sut.handle(request)
     expect(checkOrganizationByIdSpy.id).toEqual(request.organizationId)
   })
+
+  test('Should return 403 if CheckOrganizationById returns false', async () => {
+    const { sut, checkOrganizationByIdSpy } = makeSut()
+    checkOrganizationByIdSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('organizationId')))
+  })
 })
