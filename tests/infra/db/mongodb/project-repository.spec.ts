@@ -107,8 +107,14 @@ describe('ProjectMongoRepository', () => {
           ...projectParams,
           organizationId: new ObjectId(projectParams.organizationId),
           members: [
-            new ObjectId(account.insertedId.toHexString()),
-            new ObjectId(anotherAccount.insertedId.toHexString())
+            {
+              id: new ObjectId(account.insertedId.toHexString()),
+              active: true
+            },
+            {
+              id: new ObjectId(anotherAccount.insertedId.toHexString()),
+              active: true
+            }
           ]
         }
       )

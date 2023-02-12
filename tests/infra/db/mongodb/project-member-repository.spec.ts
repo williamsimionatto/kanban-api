@@ -65,7 +65,7 @@ describe('ProjectMemberMongoRepository', () => {
       const projectWithMembers = await projects.findOne({ name: projectParams.name })
 
       expect(projectWithMembers.members.length).toBe(1)
-      expect(projectWithMembers.members).toEqual([member._id])
+      expect(projectWithMembers.members[0].id).toEqual(member._id)
     })
   })
 
@@ -112,6 +112,36 @@ describe('ProjectMemberMongoRepository', () => {
       })
 
       expect(exists).toBe(false)
+    })
+  })
+
+  describe('activate()', () => {
+    test('Should activate a member on project with success', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const account = await accounts.insertOne(makeAccountParams())
+      const project = await projects.insertOne(
+        {
+          ...projectParams,
+          organizationId: new ObjectId(projectParams.organizationId),
+          members: [
+            {
+              id: new ObjectId(account.insertedId.toHexString()),
+              active: false
+            }
+          ]
+        }
+      )
+
+      await sut.activate(
+        {
+          projectId: project.insertedId.toHexString(),
+          accountId: account.insertedId.toHexString()
+        }
+      )
+      const projectLoaded = await projects.findOne({ name: projectParams.name })
+      const member = projectLoaded.members.find((member: any) => member.id.toHexString() === account.insertedId.toHexString())
+      expect(member.active).toBe(true)
     })
   })
 })
