@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { ProjectMemberStatusController } from '../../../src/presentation/controllers'
-import { badRequest, ok } from '../../../src/presentation/helpers'
+import { badRequest, ok, serverError } from '../../../src/presentation/helpers'
 import { ActivateProjectMemberSpy, InactivateProjectMemberSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): ProjectMemberStatusController.Request => ({
@@ -75,5 +75,16 @@ describe('ProjectMemberStatus Controller', () => {
         message: 'Project member status updated successfully'
       })
     )
+  })
+
+  test('Should return 500 if ActivateProjectMember throws', async () => {
+    const { sut, activateProjectMemberSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.active = true
+    jest.spyOn(activateProjectMemberSpy, 'activate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })

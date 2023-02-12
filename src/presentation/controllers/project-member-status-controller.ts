@@ -1,5 +1,5 @@
 import { ActivateProjectMember, InactivateProjectMember } from '../../domain/usecases'
-import { badRequest, ok } from '../helpers'
+import { badRequest, ok, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class ProjectMemberStatusController implements Controller {
@@ -10,22 +10,26 @@ export class ProjectMemberStatusController implements Controller {
   ) {}
 
   async handle (request: ProjectMemberStatusController.Request): Promise<HttpResponse> {
-    const error = this.validation.validate(request)
+    try {
+      const error = this.validation.validate(request)
 
-    if (error) {
-      return badRequest(error)
+      if (error) {
+        return badRequest(error)
+      }
+
+      const { projectId, accountId, active } = request
+      if (active) {
+        await this.activateProjectMember.activate({ projectId, accountId })
+      } else {
+        await this.inactivateProjectMember.inactivate({ projectId, accountId })
+      }
+
+      return ok({
+        message: 'Project member status updated successfully'
+      })
+    } catch (error) {
+      return serverError(error)
     }
-
-    const { projectId, accountId, active } = request
-    if (active) {
-      await this.activateProjectMember.activate({ projectId, accountId })
-    } else {
-      await this.inactivateProjectMember.inactivate({ projectId, accountId })
-    }
-
-    return ok({
-      message: 'Project member status updated successfully'
-    })
   }
 }
 
