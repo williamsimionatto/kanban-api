@@ -87,4 +87,15 @@ describe('ProjectMemberStatus Controller', () => {
     const httpResponse = await sut.handle(request)
     expect(httpResponse).toEqual(serverError(new Error()))
   })
+
+  test('Should return 500 if InactivateProjectMember throws', async () => {
+    const { sut, inactivateProjectMemberSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.active = false
+    jest.spyOn(inactivateProjectMemberSpy, 'inactivate').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
