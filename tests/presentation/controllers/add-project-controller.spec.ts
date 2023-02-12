@@ -65,6 +65,14 @@ describe('AddProject Controller', () => {
     expect(addProjectSpy.params).toEqual({ ...request })
   })
 
+  test('Should call AddProject with  endDate undefined', async () => {
+    const { sut, addProjectSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.endDate = undefined
+    await sut.handle(request)
+    expect(addProjectSpy.params).toEqual({ ...request })
+  })
+
   test('Should return 500 if AddProject throws', async () => {
     const { sut, addProjectSpy } = makeSut()
     jest.spyOn(addProjectSpy, 'add').mockImplementationOnce(() => {
