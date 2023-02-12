@@ -102,13 +102,14 @@ export class ProjectMongoRepository implements
 
   async edit (data: EditProjectRepository.Params): Promise<void> {
     const projectCollection = await MongoHelper.getCollection('projects')
-    const { id, ...projectData } = data
+    const { id, organizationId, ...projectData } = data
 
     await projectCollection.updateOne({
       _id: new ObjectId(id)
     }, {
       $set: {
-        ...projectData
+        ...projectData,
+        organizationId: new ObjectId(organizationId)
       }
     })
   }
