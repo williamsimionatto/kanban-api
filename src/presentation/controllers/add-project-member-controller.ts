@@ -1,7 +1,7 @@
 import { AddProjectMembers, CheckProjectMember, CheckProjectById } from '../../domain/usecases'
 
 import { InvalidParamError } from '../errors'
-import { badRequest, forbidden, noContent, serverError } from '../helpers'
+import { badRequest, created, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class AddProjectMemberController implements Controller {
@@ -30,9 +30,11 @@ export class AddProjectMemberController implements Controller {
         return forbidden(new InvalidParamError('memberId'))
       }
 
-      await this.addProjectMembers.add({ projectId, accountId })
+      await this.addProjectMembers.add({ projectId, accountId, active: true })
 
-      return noContent()
+      return created({
+        message: 'Project member added successfully'
+      })
     } catch (error) {
       return serverError(error)
     }
