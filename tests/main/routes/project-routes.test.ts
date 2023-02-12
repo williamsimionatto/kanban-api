@@ -148,7 +148,7 @@ describe('Project Routes', () => {
         .expect(403)
     })
 
-    test('Should return 204 on add project member with valid accessToken', async () => {
+    test('Should return 201 on add project member with valid accessToken', async () => {
       const res = await projectCollection.insertOne({
         name: 'any_name',
         description: 'any_description',
@@ -166,7 +166,7 @@ describe('Project Routes', () => {
         .send({
           accountId: account.insertedId.toHexString()
         })
-        .expect(204)
+        .expect(201)
     })
   })
 

@@ -70,8 +70,8 @@ describe('ProjectMongoRepository', () => {
       await accounts.insertOne(account)
       const member = await accounts.findOne({ email: account.email })
 
-      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString() })
-      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString() })
+      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString(), active: true })
+      await sut.addMember({ projectId: organization._id.toHexString(), accountId: member._id.toHexString(), active: true })
       const projectWithMembers = await projects.findOne({ name: projectParams.name })
 
       expect(projectWithMembers.members.length).toBe(1)

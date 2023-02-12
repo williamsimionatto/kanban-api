@@ -1,11 +1,14 @@
+import faker from 'faker'
+
 import { DbAddProjectMembers } from '../../../src/data/usecases'
 import { AddProjectMembers } from '../../../src/domain/usecases'
 import { throwError } from '../../domain/mocks'
 import { AddProjectMembersRepositorySpy } from '../mocks'
 
 const makeFakeProjectMemberData = (): AddProjectMembers.Params => ({
-  projectId: 'any_project_id',
-  accountId: 'any_account_id'
+  projectId: faker.datatype.uuid(),
+  accountId: faker.datatype.uuid(),
+  active: faker.datatype.boolean()
 })
 
 type SutTypes = {
