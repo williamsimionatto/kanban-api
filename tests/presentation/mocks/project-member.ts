@@ -1,11 +1,17 @@
-import { ActivateProjectMember } from '../../../src/domain/usecases'
+import { ActivateProjectMember, InactivateProjectMember } from '../../../src/domain/usecases'
 
 export class ActivateProjectMemberSpy implements ActivateProjectMember {
-  activateMember = false
   params: ActivateProjectMember.Params
 
   async activate (params: ActivateProjectMember.Params): Promise<void> {
-    this.activateMember = true
+    this.params = params
+  }
+}
+
+export class InactivateProjectMemberSpy implements InactivateProjectMember {
+  params: ActivateProjectMember.Params
+
+  async inactivate (params: ActivateProjectMember.Params): Promise<void> {
     this.params = params
   }
 }

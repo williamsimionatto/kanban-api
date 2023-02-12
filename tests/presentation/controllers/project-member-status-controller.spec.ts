@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { ProjectMemberStatusController } from '../../../src/presentation/controllers'
 import { badRequest } from '../../../src/presentation/helpers'
-import { ActivateProjectMemberSpy, ValidationSpy } from '../mocks'
+import { ActivateProjectMemberSpy, InactivateProjectMemberSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): ProjectMemberStatusController.Request => ({
   accountId: faker.datatype.uuid(),
@@ -13,16 +13,20 @@ type SutTypes = {
   sut: ProjectMemberStatusController
   validationSpy: ValidationSpy
   activateProjectMemberSpy: ActivateProjectMemberSpy
+  inactivateProjectMemberSpy: InactivateProjectMemberSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const activateProjectMemberSpy = new ActivateProjectMemberSpy()
-  const sut = new ProjectMemberStatusController(validationSpy, activateProjectMemberSpy)
+  const inactivateProjectMemberSpy = new InactivateProjectMemberSpy()
+  const sut = new ProjectMemberStatusController(validationSpy, activateProjectMemberSpy, inactivateProjectMemberSpy)
+
   return {
     sut,
     validationSpy,
-    activateProjectMemberSpy
+    activateProjectMemberSpy,
+    inactivateProjectMemberSpy
   }
 }
 
@@ -47,6 +51,17 @@ describe('ProjectMemberStatus Controller', () => {
     request.active = true
     await sut.handle(request)
     expect(activateProjectMemberSpy.params).toEqual({
+      accountId: request.accountId,
+      projectId: request.projectId
+    })
+  })
+
+  test('Should call InactivateProjectMember with correct values when active is false', async () => {
+    const { sut, inactivateProjectMemberSpy } = makeSut()
+    const request = makeFakeRequest()
+    request.active = false
+    await sut.handle(request)
+    expect(inactivateProjectMemberSpy.params).toEqual({
       accountId: request.accountId,
       projectId: request.projectId
     })
