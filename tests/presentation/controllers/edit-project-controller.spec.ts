@@ -125,4 +125,13 @@ describe('EditProject Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('organizationId')))
   })
+
+  test('Should return 500 if CheckOrganizationById throws', async () => {
+    const { sut, checkOrganizationByIdSpy } = makeSut()
+    jest.spyOn(checkOrganizationByIdSpy, 'checkById').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
