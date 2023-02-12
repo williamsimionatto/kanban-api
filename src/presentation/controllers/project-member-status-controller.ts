@@ -1,5 +1,5 @@
 import { ActivateProjectMember, InactivateProjectMember } from '../../domain/usecases'
-import { badRequest } from '../helpers'
+import { badRequest, ok } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
 export class ProjectMemberStatusController implements Controller {
@@ -23,7 +23,9 @@ export class ProjectMemberStatusController implements Controller {
       await this.inactivateProjectMember.inactivate({ projectId, accountId })
     }
 
-    return await new Promise(resolve => resolve(null))
+    return ok({
+      message: 'Project member status updated successfully'
+    })
   }
 }
 
