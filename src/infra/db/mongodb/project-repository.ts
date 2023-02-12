@@ -45,7 +45,7 @@ export class ProjectMongoRepository implements
       .match({ _id: new ObjectId(id) })
       .lookup({
         from: 'accounts',
-        localField: 'members',
+        localField: 'members.id',
         foreignField: '_id',
         as: 'members'
       })

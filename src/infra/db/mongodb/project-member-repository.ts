@@ -1,15 +1,18 @@
 import { ObjectId } from 'mongodb'
 
 import {
+  ActivateProjectMemberRepository,
   AddProjectMemberRepository,
   CheckProjectMemberRepository
 } from '../../../data/protocols/db/project'
+import { ActivateProjectMember } from '../../../domain/usecases'
 
 import { MongoHelper } from './mongo-helper'
 
 export class ProjectMemberMongoRepository implements
   AddProjectMemberRepository,
-  CheckProjectMemberRepository {
+  CheckProjectMemberRepository,
+  ActivateProjectMemberRepository {
   async addMember (data: AddProjectMemberRepository.Params): Promise<void> {
     const organizationCollection = await MongoHelper.getCollection('projects')
 
@@ -17,7 +20,10 @@ export class ProjectMemberMongoRepository implements
       _id: new ObjectId(data.projectId)
     }, {
       $addToSet: {
-        members: new ObjectId(data.accountId)
+        members: {
+          id: new ObjectId(data.accountId),
+          active: true
+        }
       }
     })
   }
@@ -34,5 +40,17 @@ export class ProjectMemberMongoRepository implements
     )
 
     return project !== null
+  }
+
+  async activate (params: ActivateProjectMember.Params): Promise<void> {
+    const projectCollection = await MongoHelper.getCollection('projects')
+    await projectCollection.updateOne({
+      _id: new ObjectId(params.projectId),
+      'members.id': new ObjectId(params.accountId)
+    }, {
+      $set: {
+        'members.$.active': true
+      }
+    })
   }
 }
