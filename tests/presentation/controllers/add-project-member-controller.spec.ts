@@ -2,7 +2,7 @@ import faker from 'faker'
 
 import { AddProjectMemberController } from '../../../src/presentation/controllers'
 import { InvalidParamError } from '../../../src/presentation/errors'
-import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
+import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 
 import { throwError } from '../../domain/mocks'
 import { AddProjectMembersSpy, CheckProjectByIdSpy, CheckProjectMemberSpy, ValidationSpy } from '../mocks'
@@ -55,7 +55,7 @@ describe('AddProjectMember Controller', () => {
     const { sut, addProjectMembersSpy } = makeSut()
     const request = makeFakeRequest()
     await sut.handle(request)
-    expect(addProjectMembersSpy.params).toEqual(request)
+    expect(addProjectMembersSpy.params).toEqual({ ...request, active: true })
   })
 
   test('Should return 500 if AddProjectMember throws', async () => {
@@ -65,10 +65,14 @@ describe('AddProjectMember Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  test('Should return 204 on success', async () => {
+  test('Should return 201 on success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(noContent())
+    expect(httpResponse).toEqual(
+      created({
+        message: 'Project member added successfully'
+      })
+    )
   })
 
   test('Should call CheckProjectById with correct values', async () => {

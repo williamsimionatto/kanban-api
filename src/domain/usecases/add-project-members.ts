@@ -6,5 +6,6 @@ export namespace AddProjectMembers {
   export type Params = {
     projectId: string
     accountId: string
+    active: boolean
   }
 }
