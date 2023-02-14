@@ -2,6 +2,7 @@ import faker from 'faker'
 import { DbAddProjectPhase } from '../../../src/data/usecases'
 
 import { AddProjectPhase } from '../../../src/domain/usecases'
+import { throwError } from '../../domain/mocks'
 import { AddProjectPhaseRepositorySpy } from '../mocks'
 
 const makeFakeProjectPhaseData = (): AddProjectPhase.Params => ({
@@ -30,8 +31,16 @@ const makeSut = (): SutTypes => {
 describe('DbAddProjectPhase Usecase', () => {
   test('Should call AddProjectPhaseRepository with correct values', async () => {
     const { sut, addProjectPhaseRepositorySpy } = makeSut()
-    const projectData = makeFakeProjectPhaseData()
-    await sut.add(projectData)
-    expect(addProjectPhaseRepositorySpy.params).toEqual(projectData)
+    const projectPhaseData = makeFakeProjectPhaseData()
+    await sut.add(projectPhaseData)
+    expect(addProjectPhaseRepositorySpy.params).toEqual(projectPhaseData)
+  })
+
+  test('Should throw if AddProjectMembersRepository throws', async () => {
+    const { sut, addProjectPhaseRepositorySpy } = makeSut()
+    jest.spyOn(addProjectPhaseRepositorySpy, 'add').mockImplementationOnce(throwError)
+    const projectPhaseData = makeFakeProjectPhaseData()
+    const promise = sut.add(projectPhaseData)
+    await expect(promise).rejects.toThrow()
   })
 })
