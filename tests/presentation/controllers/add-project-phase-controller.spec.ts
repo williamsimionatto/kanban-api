@@ -1,7 +1,8 @@
 import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
-import { badRequest } from '../../../src/presentation/helpers'
+import { badRequest, serverError } from '../../../src/presentation/helpers'
+import { throwError } from '../../domain/mocks'
 import { AddProjectPhaseSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectPhaseController.Request => ({
@@ -50,5 +51,12 @@ describe('AddProjectPhase Controller', () => {
     const request = makeFakeRequest()
     await sut.handle(request)
     expect(addProjectPhaseSpy.params).toEqual({ ...request })
+  })
+
+  test('Should return serverError if AddProjectPhase throws', async () => {
+    const { sut, addProjectPhaseSpy } = makeSut()
+    jest.spyOn(addProjectPhaseSpy, 'add').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
