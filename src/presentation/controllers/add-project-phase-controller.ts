@@ -1,5 +1,5 @@
 import { AddProjectPhase } from '../../domain/usecases'
-import { badRequest } from '../helpers'
+import { badRequest, serverError } from '../helpers'
 import { Controller, Validation } from '../protocols'
 
 export class AddProjectPhaseController implements Controller {
@@ -9,14 +9,18 @@ export class AddProjectPhaseController implements Controller {
   ) {}
 
   async handle (request: AddProjectPhaseController.Request): Promise<any> {
-    const error = this.validation.validate(request)
-    if (error) {
-      return badRequest(error)
+    try {
+      const error = this.validation.validate(request)
+      if (error) {
+        return badRequest(error)
+      }
+
+      await this.addProjectPhase.add(request)
+
+      return await new Promise(resolve => resolve(null))
+    } catch (error) {
+      return serverError(error)
     }
-
-    await this.addProjectPhase.add(request)
-
-    return await new Promise(resolve => resolve(null))
   }
 }
 
