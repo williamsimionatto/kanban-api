@@ -2,7 +2,7 @@ import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
 import { badRequest } from '../../../src/presentation/helpers'
-import { ValidationSpy } from '../mocks'
+import { AddProjectPhaseSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectPhaseController.Request => ({
   projectId: faker.datatype.uuid(),
@@ -15,15 +15,18 @@ const makeFakeRequest = (): AddProjectPhaseController.Request => ({
 type SutTypes = {
   sut: AddProjectPhaseController
   validationSpy: ValidationSpy
+  addProjectPhaseSpy: AddProjectPhaseSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
-  const sut = new AddProjectPhaseController(validationSpy)
+  const addProjectPhaseSpy = new AddProjectPhaseSpy()
+  const sut = new AddProjectPhaseController(validationSpy, addProjectPhaseSpy)
 
   return {
     sut,
-    validationSpy
+    validationSpy,
+    addProjectPhaseSpy
   }
 }
 
@@ -40,5 +43,12 @@ describe('AddProjectPhase Controller', () => {
     validationSpy.error = new Error()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error()))
+  })
+
+  test('Should call AddProjectPhase with correct values', async () => {
+    const { sut, addProjectPhaseSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(addProjectPhaseSpy.params).toEqual({ ...request })
   })
 })
