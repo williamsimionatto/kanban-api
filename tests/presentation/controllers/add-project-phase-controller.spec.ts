@@ -1,6 +1,7 @@
 import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
+import { badRequest } from '../../../src/presentation/helpers'
 import { ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectPhaseController.Request => ({
@@ -32,5 +33,12 @@ describe('AddProjectPhase Controller', () => {
     const httpRequest = makeFakeRequest()
     await sut.handle(httpRequest)
     expect(validationSpy.input).toEqual(httpRequest)
+  })
+
+  test('Should return 400 if Validation returns an error', async () => {
+    const { sut, validationSpy } = makeSut()
+    validationSpy.error = new Error()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error()))
   })
 })
