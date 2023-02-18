@@ -1,5 +1,5 @@
 import { AddProjectPhase } from '../../domain/usecases'
-import { badRequest, serverError } from '../helpers'
+import { badRequest, created, serverError } from '../helpers'
 import { Controller, Validation } from '../protocols'
 
 export class AddProjectPhaseController implements Controller {
@@ -17,7 +17,9 @@ export class AddProjectPhaseController implements Controller {
 
       await this.addProjectPhase.add(request)
 
-      return await new Promise(resolve => resolve(null))
+      return created({
+        message: 'Phase added successfully'
+      })
     } catch (error) {
       return serverError(error)
     }
