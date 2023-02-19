@@ -63,4 +63,33 @@ describe('ProjectPhaseMongoRepository', () => {
       expect(projectPhaseData[0].name).toBe(phaseParams.name)
     })
   })
+
+  describe('check()', () => {
+    test('Should return true if phase exists', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const res = await projects.insertOne(projectParams)
+      const phaseParams = makePhaseParams()
+      phaseParams.projectId = res.insertedId.toHexString()
+      await sut.add(phaseParams)
+      const exists = await sut.checkPhase({
+        projectId: phaseParams.projectId,
+        phaseType: phaseParams.type
+      })
+
+      expect(exists).toBe(true)
+    })
+
+    test('Should return false if phase not exists', async () => {
+      const sut = makeSut()
+      const projectParams = makeProjectParams()
+      const res = await projects.insertOne(projectParams)
+      const exists = await sut.checkPhase({
+        projectId: res.insertedId.toHexString(),
+        phaseType: 'BACKLOG'
+      })
+
+      expect(exists).toBe(false)
+    })
+  })
 })
