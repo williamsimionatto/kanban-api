@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { DbCheckProjectPhase } from '../../../src/data/usecases/db-check-project-phase'
+import { DbCheckProjectPhase } from '../../../src/data/usecases'
 import { PhaseType } from '../../../src/domain/usecases'
 import { CheckProjectPhaseRepositorySpy } from '../mocks'
 
