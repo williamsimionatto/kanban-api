@@ -33,6 +33,13 @@ describe('DbCheckProjectPhase', () => {
     expect(checkProjectPhaseRepositorySpy.params).toEqual({ projectId, phaseType })
   })
 
+  test('Should throw if CheckProjectPhaseRepository throws', async () => {
+    const { sut, checkProjectPhaseRepositorySpy } = makeSut()
+    jest.spyOn(checkProjectPhaseRepositorySpy, 'checkPhase').mockRejectedValueOnce(new Error())
+    const promise = sut.check({ projectId, phaseType })
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should return false if CheckProjectPhaseRepository returns false', async () => {
     const { sut, checkProjectPhaseRepositorySpy } = makeSut()
     checkProjectPhaseRepositorySpy.result = false
