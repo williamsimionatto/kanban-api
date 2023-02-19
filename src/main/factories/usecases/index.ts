@@ -13,3 +13,5 @@ export * from './load-project-by-id-factory'
 
 export * from './db-activate-project-member-factory'
 export * from './db-inactivate-project-member-factory'
+
+export * from './add-project-phase'
