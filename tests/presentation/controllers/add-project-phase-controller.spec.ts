@@ -4,7 +4,7 @@ import { AddProjectPhaseController } from '../../../src/presentation/controllers
 import { InvalidParamError } from '../../../src/presentation/errors'
 import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 import { throwError } from '../../domain/mocks'
-import { AddProjectPhaseSpy, CheckProjectByIdSpy, ValidationSpy } from '../mocks'
+import { AddProjectPhaseSpy, CheckProjectByIdSpy, CheckProjectPhaseSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectPhaseController.Request => ({
   projectId: faker.datatype.uuid(),
@@ -19,19 +19,27 @@ type SutTypes = {
   validationSpy: ValidationSpy
   addProjectPhaseSpy: AddProjectPhaseSpy
   checkProjectByIdSpy: CheckProjectByIdSpy
+  checkProjectPhaseSpy: CheckProjectPhaseSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const addProjectPhaseSpy = new AddProjectPhaseSpy()
   const checkProjectByIdSpy = new CheckProjectByIdSpy()
-  const sut = new AddProjectPhaseController(validationSpy, addProjectPhaseSpy, checkProjectByIdSpy)
+  const checkProjectPhaseSpy = new CheckProjectPhaseSpy()
+  const sut = new AddProjectPhaseController(
+    validationSpy,
+    addProjectPhaseSpy,
+    checkProjectByIdSpy,
+    checkProjectPhaseSpy
+  )
 
   return {
     sut,
     validationSpy,
     addProjectPhaseSpy,
-    checkProjectByIdSpy
+    checkProjectByIdSpy,
+    checkProjectPhaseSpy
   }
 }
 
@@ -93,5 +101,12 @@ describe('AddProjectPhase Controller', () => {
     jest.spyOn(checkProjectByIdSpy, 'checkById').mockImplementationOnce(throwError)
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('Should call CheckProjectPhase with correct values', async () => {
+    const { sut, addProjectPhaseSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(addProjectPhaseSpy.params).toEqual({ ...request })
   })
 })
