@@ -1,9 +1,10 @@
 import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
-import { badRequest, created, serverError } from '../../../src/presentation/helpers'
+import { InvalidParamError } from '../../../src/presentation/errors'
+import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 import { throwError } from '../../domain/mocks'
-import { AddProjectPhaseSpy, ValidationSpy } from '../mocks'
+import { AddProjectPhaseSpy, CheckProjectByIdSpy, ValidationSpy } from '../mocks'
 
 const makeFakeRequest = (): AddProjectPhaseController.Request => ({
   projectId: faker.datatype.uuid(),
@@ -17,17 +18,20 @@ type SutTypes = {
   sut: AddProjectPhaseController
   validationSpy: ValidationSpy
   addProjectPhaseSpy: AddProjectPhaseSpy
+  checkProjectByIdSpy: CheckProjectByIdSpy
 }
 
 const makeSut = (): SutTypes => {
   const validationSpy = new ValidationSpy()
   const addProjectPhaseSpy = new AddProjectPhaseSpy()
-  const sut = new AddProjectPhaseController(validationSpy, addProjectPhaseSpy)
+  const checkProjectByIdSpy = new CheckProjectByIdSpy()
+  const sut = new AddProjectPhaseController(validationSpy, addProjectPhaseSpy, checkProjectByIdSpy)
 
   return {
     sut,
     validationSpy,
-    addProjectPhaseSpy
+    addProjectPhaseSpy,
+    checkProjectByIdSpy
   }
 }
 
@@ -68,5 +72,26 @@ describe('AddProjectPhase Controller', () => {
         message: 'Phase added successfully'
       })
     )
+  })
+
+  test('Should call CheckProjectById with correct values', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    const request = makeFakeRequest()
+    await sut.handle(request)
+    expect(checkProjectByIdSpy.id).toBe(request.projectId)
+  })
+
+  test('Should return 403 if CheckProjectById returns false', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    checkProjectByIdSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('projectId')))
+  })
+
+  test('Should return 500 if CheckProjectById throws', async () => {
+    const { sut, checkProjectByIdSpy } = makeSut()
+    jest.spyOn(checkProjectByIdSpy, 'checkById').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 })
