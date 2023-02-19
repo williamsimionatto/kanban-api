@@ -116,4 +116,11 @@ describe('AddProjectPhase Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('type')))
   })
+
+  test('Should throw if CheckProjectPhase throws', async () => {
+    const { sut, checkProjectPhaseSpy } = makeSut()
+    jest.spyOn(checkProjectPhaseSpy, 'check').mockImplementationOnce(throwError)
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
