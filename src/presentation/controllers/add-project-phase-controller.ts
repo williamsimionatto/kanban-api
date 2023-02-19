@@ -23,10 +23,14 @@ export class AddProjectPhaseController implements Controller {
         return forbidden(new InvalidParamError('projectId'))
       }
 
-      await this.checkProjectPhase.check({
+      const phaseExists = await this.checkProjectPhase.check({
         projectId: request.projectId,
         phaseType: request.type
       })
+
+      if (!phaseExists) {
+        return forbidden(new InvalidParamError('type'))
+      }
 
       await this.addProjectPhase.add(request)
 
