@@ -109,4 +109,11 @@ describe('AddProjectPhase Controller', () => {
     await sut.handle(request)
     expect(addProjectPhaseSpy.params).toEqual({ ...request })
   })
+
+  test('Should return 403 if CheckProjectPhase returns false', async () => {
+    const { sut, checkProjectPhaseSpy } = makeSut()
+    checkProjectPhaseSpy.result = false
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(forbidden(new InvalidParamError('type')))
+  })
 })
