@@ -32,4 +32,11 @@ describe('DbCheckProjectPhase', () => {
     await sut.check({ projectId, phaseType })
     expect(checkProjectPhaseRepositorySpy.params).toEqual({ projectId, phaseType })
   })
+
+  test('Should return false if CheckProjectPhaseRepository returns false', async () => {
+    const { sut, checkProjectPhaseRepositorySpy } = makeSut()
+    checkProjectPhaseRepositorySpy.result = false
+    const result = await sut.check({ projectId, phaseType })
+    expect(result).toBe(false)
+  })
 })
