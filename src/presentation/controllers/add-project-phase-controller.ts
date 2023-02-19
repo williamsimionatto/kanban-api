@@ -1,4 +1,4 @@
-import { AddProjectPhase, CheckProjectById } from '../../domain/usecases'
+import { AddProjectPhase, CheckProjectById, CheckProjectPhase } from '../../domain/usecases'
 import { InvalidParamError } from '../errors'
 import { badRequest, created, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
@@ -7,7 +7,8 @@ export class AddProjectPhaseController implements Controller {
   constructor (
     private readonly validation: Validation,
     private readonly addProjectPhase: AddProjectPhase,
-    private readonly checkProjectById: CheckProjectById
+    private readonly checkProjectById: CheckProjectById,
+    private readonly checkProjectPhase: CheckProjectPhase
   ) {}
 
   async handle (request: AddProjectPhaseController.Request): Promise<HttpResponse> {
@@ -21,6 +22,11 @@ export class AddProjectPhaseController implements Controller {
       if (!projectExists) {
         return forbidden(new InvalidParamError('projectId'))
       }
+
+      await this.checkProjectPhase.check({
+        projectId: request.projectId,
+        phaseType: request.type
+      })
 
       await this.addProjectPhase.add(request)
 
