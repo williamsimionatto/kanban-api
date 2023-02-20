@@ -170,6 +170,67 @@ describe('Project Routes', () => {
     })
   })
 
+  describe('POST /project/:projectId/phases', () => {
+    let project: any
+    let organization: any
+
+    beforeAll(async () => {
+      const organizationData = {
+        name: 'organization name',
+        description: 'organization description'
+      }
+
+      organization = await organizationCollection.insertOne(organizationData)
+
+      project = await projectCollection.insertOne({
+        name: 'any_name',
+        description: 'any_description',
+        status: 'active',
+        startDate: '2021-01-01',
+        endDate: '2021-12-31',
+        organizationId: organization.insertedId.toHexString()
+      })
+    })
+
+    test('Should return 403 on add project phase without accesstoken', async () => {
+      const projectId = project.insertedId.toHexString()
+
+      await request(app)
+        .post(`/api/project/${projectId}/phases`)
+        .send({
+          name: 'any_name',
+          description: 'any_description',
+          order: 1,
+          type: 'BACKLOG'
+        })
+        .expect(403)
+    })
+
+    test('Should return 201 on add project phase with valid accessToken', async () => {
+      const accessToken = await mockAccessToken()
+      const res = await projectCollection.insertOne({
+        name: 'any_name',
+        description: 'any_description',
+        status: 'active',
+        startDate: '2021-01-01',
+        endDate: '2021-12-31',
+        organizationId: organization.insertedId.toHexString()
+      })
+      const projectId = res.insertedId.toHexString()
+
+      await request(app)
+        .post(`/api/project/${projectId}/phases`)
+        .set('x-access-token', accessToken)
+        .send({
+          name: 'any_name',
+          description: 'any_description',
+          order: 1,
+          type: 'BACKLOG'
+        })
+        .expect(201)
+    })
+  })
+
   describe('PUT /project/:id', () => {
     let project: any
     let organization: any
