@@ -28,7 +28,7 @@ export class AddProjectPhaseController implements Controller {
         phaseType: request.type
       })
 
-      if (!phaseExists) {
+      if (phaseExists) {
         return forbidden(new InvalidParamError('type'))
       }
 

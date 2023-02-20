@@ -9,7 +9,7 @@ export class AddProjectPhaseSpy implements AddProjectPhase {
 }
 
 export class CheckProjectPhaseSpy implements CheckProjectPhase {
-  result = true
+  result = false
   params: CheckProjectPhase.Params
 
   async check (params: CheckProjectPhase.Params): Promise<CheckProjectPhase.Result> {
