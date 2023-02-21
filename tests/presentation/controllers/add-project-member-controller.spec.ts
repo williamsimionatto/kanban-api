@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { AddProjectMemberController } from '../../../src/presentation/controllers'
-import { InvalidParamError } from '../../../src/presentation/errors'
+import { DataIntegrityViolationError, ObjectNotFoundError } from '../../../src/presentation/errors'
 import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 
 import { throwError } from '../../domain/mocks'
@@ -85,8 +85,9 @@ describe('AddProjectMember Controller', () => {
   test('Should return 403 if CheckProjectById returns false', async () => {
     const { sut, checkProjectByIdSpy } = makeSut()
     checkProjectByIdSpy.result = false
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('projectId')))
+    const request = makeFakeRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(forbidden(new ObjectNotFoundError('projectId', request.projectId)))
   })
 
   test('Should return 500 if CheckProjectById throws', async () => {
@@ -110,7 +111,7 @@ describe('AddProjectMember Controller', () => {
     const { sut, checkProjectMemberSpy } = makeSut()
     checkProjectMemberSpy.result = true
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('memberId')))
+    expect(httpResponse).toEqual(forbidden(new DataIntegrityViolationError('memberId')))
   })
 
   test('Should return 500 if CheckProjectMember throws', async () => {
