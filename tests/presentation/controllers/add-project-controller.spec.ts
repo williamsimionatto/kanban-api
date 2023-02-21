@@ -2,7 +2,7 @@ import faker from 'faker'
 import MockDate from 'mockdate'
 
 import { AddProjectController } from '../../../src/presentation/controllers'
-import { InvalidParamError } from '../../../src/presentation/errors'
+import { ObjectNotFoundError } from '../../../src/presentation/errors'
 import { badRequest, forbidden, noContent, serverError } from '../../../src/presentation/helpers'
 
 import { AddProjectSpy, CheckOrganizationByIdSpy, ValidationSpy } from '../mocks'
@@ -98,8 +98,9 @@ describe('AddProject Controller', () => {
   test('Should return 403 if CheckOrganizationById returns false', async () => {
     const { sut, checkOrganizationByIdSpy } = makeSut()
     checkOrganizationByIdSpy.result = false
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('organizationId')))
+    const request = makeFakeRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(forbidden(new ObjectNotFoundError('organizationId', request.organizationId)))
   })
 
   test('Should return 500 if CheckOrganizationById throws', async () => {
