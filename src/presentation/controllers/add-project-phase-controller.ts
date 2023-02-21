@@ -1,5 +1,5 @@
 import { AddProjectPhase, CheckProjectById, CheckProjectPhase } from '../../domain/usecases'
-import { InvalidParamError } from '../errors'
+import { DataIntegrityViolationError, ObjectNotFoundError } from '../errors'
 import { badRequest, created, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
@@ -20,7 +20,7 @@ export class AddProjectPhaseController implements Controller {
 
       const projectExists = await this.checkProjectById.checkById(request.projectId)
       if (!projectExists) {
-        return forbidden(new InvalidParamError('projectId'))
+        return forbidden(new ObjectNotFoundError('projectId', request.projectId))
       }
 
       const phaseExists = await this.checkProjectPhase.check({
@@ -29,7 +29,7 @@ export class AddProjectPhaseController implements Controller {
       })
 
       if (phaseExists) {
-        return forbidden(new InvalidParamError('type'))
+        return forbidden(new DataIntegrityViolationError('type'))
       }
 
       await this.addProjectPhase.add(request)

@@ -1,5 +1,5 @@
 import { AddProject, CheckOrganizationById } from '../../domain/usecases'
-import { InvalidParamError } from '../errors'
+import { ObjectNotFoundError } from '../errors'
 import { badRequest, forbidden, noContent, serverError } from '../helpers/http-helper'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
@@ -21,7 +21,7 @@ export class AddProjectController implements Controller {
       const organizationExists = await this.checkOrganizationById.checkById(organizationId)
 
       if (!organizationExists) {
-        return forbidden(new InvalidParamError('organizationId'))
+        return forbidden(new ObjectNotFoundError('organizationId', organizationId))
       }
 
       await this.addProject.add({

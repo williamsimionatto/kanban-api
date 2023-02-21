@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
-import { InvalidParamError } from '../../../src/presentation/errors'
+import { DataIntegrityViolationError, ObjectNotFoundError } from '../../../src/presentation/errors'
 import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 import { throwError } from '../../domain/mocks'
 import { AddProjectPhaseSpy, CheckProjectByIdSpy, CheckProjectPhaseSpy, ValidationSpy } from '../mocks'
@@ -92,8 +92,9 @@ describe('AddProjectPhase Controller', () => {
   test('Should return 403 if CheckProjectById returns false', async () => {
     const { sut, checkProjectByIdSpy } = makeSut()
     checkProjectByIdSpy.result = false
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('projectId')))
+    const request = makeFakeRequest()
+    const httpResponse = await sut.handle(request)
+    expect(httpResponse).toEqual(forbidden(new ObjectNotFoundError('projectId', request.projectId)))
   })
 
   test('Should return 500 if CheckProjectById throws', async () => {
@@ -114,7 +115,7 @@ describe('AddProjectPhase Controller', () => {
     const { sut, checkProjectPhaseSpy } = makeSut()
     checkProjectPhaseSpy.result = true
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('type')))
+    expect(httpResponse).toEqual(forbidden(new DataIntegrityViolationError('type')))
   })
 
   test('Should throw if CheckProjectPhase throws', async () => {

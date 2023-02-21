@@ -1,6 +1,6 @@
 import { AddProjectMembers, CheckProjectMember, CheckProjectById } from '../../domain/usecases'
 
-import { InvalidParamError } from '../errors'
+import { DataIntegrityViolationError, ObjectNotFoundError } from '../errors'
 import { badRequest, created, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
@@ -22,12 +22,12 @@ export class AddProjectMemberController implements Controller {
 
       const projectExists = await this.checkProjectById.checkById(projectId)
       if (!projectExists) {
-        return forbidden(new InvalidParamError('projectId'))
+        return forbidden(new ObjectNotFoundError('projectId', projectId))
       }
 
       const isMember = await this.checkProjectMember.checkMember({ projectId, memberId: accountId })
       if (isMember) {
-        return forbidden(new InvalidParamError('memberId'))
+        return forbidden(new DataIntegrityViolationError('memberId'))
       }
 
       await this.addProjectMembers.add({ projectId, accountId, active: true })
