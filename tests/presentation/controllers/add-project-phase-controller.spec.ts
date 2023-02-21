@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { AddProjectPhaseController } from '../../../src/presentation/controllers'
-import { InvalidParamError } from '../../../src/presentation/errors'
+import { DataIntegrityViolationError, InvalidParamError } from '../../../src/presentation/errors'
 import { badRequest, created, forbidden, serverError } from '../../../src/presentation/helpers'
 import { throwError } from '../../domain/mocks'
 import { AddProjectPhaseSpy, CheckProjectByIdSpy, CheckProjectPhaseSpy, ValidationSpy } from '../mocks'
@@ -114,7 +114,7 @@ describe('AddProjectPhase Controller', () => {
     const { sut, checkProjectPhaseSpy } = makeSut()
     checkProjectPhaseSpy.result = true
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(forbidden(new InvalidParamError('type')))
+    expect(httpResponse).toEqual(forbidden(new DataIntegrityViolationError('type')))
   })
 
   test('Should throw if CheckProjectPhase throws', async () => {

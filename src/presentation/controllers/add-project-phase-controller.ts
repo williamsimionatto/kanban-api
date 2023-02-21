@@ -1,5 +1,5 @@
 import { AddProjectPhase, CheckProjectById, CheckProjectPhase } from '../../domain/usecases'
-import { InvalidParamError } from '../errors'
+import { DataIntegrityViolationError, InvalidParamError } from '../errors'
 import { badRequest, created, forbidden, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
 
@@ -29,7 +29,7 @@ export class AddProjectPhaseController implements Controller {
       })
 
       if (phaseExists) {
-        return forbidden(new InvalidParamError('type'))
+        return forbidden(new DataIntegrityViolationError('type'))
       }
 
       await this.addProjectPhase.add(request)
