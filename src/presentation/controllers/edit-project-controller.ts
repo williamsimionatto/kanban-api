@@ -1,5 +1,5 @@
 import { CheckOrganizationById, CheckProjectById, EditProject } from '../../domain/usecases'
-import { InvalidParamError } from '../errors'
+import { ObjectNotFoundError } from '../errors'
 
 import { badRequest, forbidden, noContent, serverError } from '../helpers'
 import { Controller, HttpResponse, Validation } from '../protocols'
@@ -22,12 +22,12 @@ export class EditProjectController implements Controller {
       const { id, name, description, status, startDate, endDate, organizationId } = request
       const projectExists = await this.checkProjectById.checkById(id)
       if (!projectExists) {
-        return forbidden(new InvalidParamError('id'))
+        return forbidden(new ObjectNotFoundError('id', id))
       }
 
       const organizationExists = await this.checkOrganizationById.checkById(organizationId)
       if (!organizationExists) {
-        return forbidden(new InvalidParamError('organizationId'))
+        return forbidden(new ObjectNotFoundError('organizationId', organizationId))
       }
 
       await this.editProject.edit({
