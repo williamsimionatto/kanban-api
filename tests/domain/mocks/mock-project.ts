@@ -1,7 +1,7 @@
 import faker from 'faker'
 import FakeObjectId from 'bson-objectid'
 
-import { LoadProjectsByOrganization } from '../../../src/domain/usecases'
+import { AddProject, LoadProjectsByOrganization } from '../../../src/domain/usecases'
 import { ProjectModel } from '../../../src/domain/model'
 
 export const mockProjectModel = (): LoadProjectsByOrganization.Result => ({
@@ -31,3 +31,12 @@ export const mockProjectModelWithMembers = (): ProjectModel => (
     }]
   })
 )
+
+export const makeProjectParams = (): AddProject.Params => ({
+  name: faker.name.firstName(),
+  description: faker.random.words(),
+  status: faker.random.arrayElement(['active', 'inactive']),
+  startDate: faker.date.recent(),
+  endDate: faker.date.future(),
+  organizationId: new FakeObjectId().toHexString()
+})

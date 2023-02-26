@@ -4,7 +4,8 @@ import MockDate from 'mockdate'
 import { Collection, ObjectId } from 'mongodb'
 
 import { ProjectMongoRepository, MongoHelper } from '../../../../src/infra/db/mongodb'
-import { AddProject, AddAccount } from '../../../../src/domain/usecases'
+import { AddAccount } from '../../../../src/domain/usecases'
+import { makeProjectParams } from '../../../domain/mocks'
 
 let projects: Collection
 let accounts: Collection
@@ -14,15 +15,6 @@ const makeAccountParams = (): AddAccount.Params => ({
   email: faker.internet.email(),
   password: faker.internet.password(),
   organizationId: faker.datatype.uuid()
-})
-
-const makeProjectParams = (): AddProject.Params => ({
-  name: faker.name.firstName(),
-  description: faker.random.words(),
-  status: faker.random.arrayElement(['active', 'inactive']),
-  startDate: faker.date.recent(),
-  endDate: faker.date.future(),
-  organizationId: new FakeObjectId().toHexString()
 })
 
 const makeSut = (): ProjectMongoRepository => {

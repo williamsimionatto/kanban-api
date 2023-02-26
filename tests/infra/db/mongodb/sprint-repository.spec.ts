@@ -2,20 +2,13 @@ import FakeObjectId from 'bson-objectid'
 import faker from 'faker'
 import MockDate from 'mockdate'
 import { Collection, ObjectId } from 'mongodb'
-import { AddProject, AddSprint } from '../../../../src/domain/usecases'
+import { AddSprint } from '../../../../src/domain/usecases'
 import { MongoHelper, SprintMongoRepository } from '../../../../src/infra/db/mongodb'
+
+import { makeProjectParams } from '../../../domain/mocks'
 
 let projects: Collection
 let sprints: Collection
-
-const makeProjectParams = (): AddProject.Params => ({
-  name: faker.name.firstName(),
-  description: faker.random.words(),
-  status: faker.random.arrayElement(['active', 'inactive']),
-  startDate: faker.date.recent(),
-  endDate: faker.date.future(),
-  organizationId: new FakeObjectId().toHexString()
-})
 
 const makeSprintParams = (): AddSprint.Params => ({
   name: faker.name.firstName(),
