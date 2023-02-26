@@ -2,6 +2,7 @@ import faker from 'faker'
 import { DbAddSprint } from '../../../src/data/usecases'
 
 import { AddSprint } from '../../../src/domain/usecases'
+import { throwError } from '../../domain/mocks'
 import { AddSprintRepositorySpy } from '../mocks'
 
 const mockAddSprintParams = (): AddSprint.Params => ({
@@ -33,5 +34,13 @@ describe('DbAddSprint UseCase', () => {
     const sprintParams = mockAddSprintParams()
     await sut.add(sprintParams)
     expect(addSprintRepositorySpy.params).toEqual(sprintParams)
+  })
+
+  test('Should throw if AddSprintRepository throws', async () => {
+    const { sut, addSprintRepositorySpy } = makeSut()
+    jest.spyOn(addSprintRepositorySpy, 'add').mockImplementationOnce(throwError)
+    const sprintParams = mockAddSprintParams()
+    const sprint = sut.add(sprintParams)
+    await expect(sprint).rejects.toThrow()
   })
 })
