@@ -1,7 +1,7 @@
 import faker from 'faker'
 
 import { AddProject } from '../../../src/domain/usecases'
-import { DbAddProject } from '../../../src/data/usecases/'
+import { DbAddProject } from '../../../src/data/usecases'
 
 import { throwError } from '../../domain/mocks'
 import { AddProjectRepositorySpy } from '../mocks'

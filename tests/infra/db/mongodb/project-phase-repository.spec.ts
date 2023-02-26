@@ -1,22 +1,13 @@
-import FakeObjectId from 'bson-objectid'
 import faker from 'faker'
 import MockDate from 'mockdate'
 import { Collection } from 'mongodb'
 
-import { AddProject, AddProjectPhase } from '../../../../src/domain/usecases'
+import { AddProjectPhase } from '../../../../src/domain/usecases'
 import { MongoHelper, ProjectPhaseMongoRepository } from '../../../../src/infra/db/mongodb'
+import { makeProjectParams } from '../../../domain/mocks'
 
 let projects: Collection
 let projectPhase: Collection
-
-const makeProjectParams = (): AddProject.Params => ({
-  name: faker.name.firstName(),
-  description: faker.random.words(),
-  status: faker.random.arrayElement(['active', 'inactive']),
-  startDate: faker.date.recent(),
-  endDate: faker.date.future(),
-  organizationId: new FakeObjectId().toHexString()
-})
 
 const makePhaseParams = (): AddProjectPhase.Params => ({
   projectId: '',
